@@ -528,6 +528,39 @@ class SBF_API {
       return $data;
     }
 
+    public function setFavRoute($route_id, $oauth_user_id){
+      $isFav = false;
+      $haveRow = false;
+      $now = date('Y-m-d H:i:s');
+      $sql = "select favorite_status from sbfdm_user_route where route_id = $route_id and oauth_user_id='$oauth_user_id' ";
+
+
+
+      $this->database->query("insert into debug (txt) values('$sql')");
+
+
+      $result = $this->database->query($sql);
+      if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $isFav = $row['favorite_status'];
+        $haveRow = true;
+      }
+
+      $NewBoolean='false';
+      if($isFav) {$NewBoolean = 'false';} else {$NewBoolean='true';}
+
+      if($haveRow){
+        $sql = "update sbfdm_user_route set favorite_status = '$NewBoolean' , udate='$now' where route_id = $route_id and oauth_user_id='$oauth_user_id' ";
+      }else{
+        $sql = "insert into sbfdm_user_route (route_id, oauth_user_id, favorite_status, cdate, udate) ";
+        $sql .= " values($route_id, '$oauth_user_id', '$NewBoolean' , '$now', '$now') ";
+      }
+      $this->database->query($sql);
+
+      $data['sql'] = $sql;
+      return $data;
+    }
+
     function generateRandomString($length = 16) {
 			$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 			$charactersLength = strlen($characters);
@@ -583,6 +616,10 @@ if ($_POST['method'] == "get_route_base_user") {
     echo(json_encode($response));
 } else if ($_POST['method'] == "get_user_score_level") {
     $response = $sbf_api->getUserScoreLevel($_POST['oauth_user_id']);
+    header('Content-Type: application/json');
+    echo(json_encode($response));
+}else if ($_POST['method'] == "set_fav_route") {
+    $response = $sbf_api->setFavRoute($_POST['route_id'],$_POST['oauth_user_id']);
     header('Content-Type: application/json');
     echo(json_encode($response));
 }

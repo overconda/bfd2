@@ -139,7 +139,54 @@ function renderRoutes() {
   $(".route-item:eq(0) .route-desc h3").html("Singha Headquarter");
   $(".route-item:eq(1) .route-desc h3").html("Nakniwat Road");
   $(".route-item:eq(2) .route-desc h3").html("Chok Chai 4");
+
+
+  ///// NEAR BY ROUTES
+  //// 1. get near by bases from localStorage
+  //// 2. get each bases's routes
+  //// 3. trim routes;
+  //// 4. order
+
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function (position) {
+      var sbf_nearby_bases = getLocalStorage('sbf_nearby_bases');
+      var sbf_onlocation = [];
+
+      var sbf_current_gps = {'latitude': position.coords.latitude, 'longitude': position.coords.longitude};
+
+      if (sbf_nearby_bases != null) {
+        var routes = [];
+        sbf_nearby_bases.forEach(function (base, index) {
+          var distance_in_km = haversineGreatCircleDistance(sbf_current_gps.latitude, sbf_current_gps.longitude, base.base_latitude, base.base_longitude, 6371);
+          //doLog('You Far ::: [' + base.ID + '] [' + distance_in_km.toFixed(4) + ' KM] ' + base.base_title);
+          //doLog('Nearby :: [' + base.ID + '] {route} [' + base.route_id + '] [' + distance_in_km.toFixed(4) + ' KM] ' + base.base_title);
+          routes.push(base.route_id);
+        });
+        var NearbyRoutes = Array.from(new Set(routes));
+        //console.log('======= Nearby ==========');
+        //console.log(NearbyRoutes);
+
+        var NearbyNum = NearbyRoutes.length;
+        $('.route-filter span').text(NearbyNum);
+
+      };
+    });
+  }
 }
+
+///// Route favorite Button Clicked
+$('.route-fav').click(function(){
+  var pair = window.location.search.substring(1).split("=");
+  var route_id = pair[1];
+  var sbf_user = getLocalStorage('sbf_user');
+
+  console.log('Fav Click .. prepare to cal API route_id ' + route_id +', uid ' + sbf_user.oauth_user_id);
+  var params = {'method': 'set_fav_route', 'route_id': route_id, 'oauth_user_id': sbf_user.oauth_user_id};
+  $.post(api_ws, params, function(response){
+    console.log('After FAV api');
+    console.log('SQL: '+ response.sql);
+  });
+});
 
 /**
  * Render & manipulate routes_detail.html
