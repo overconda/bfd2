@@ -296,9 +296,24 @@ class SBF_API {
      * @param type $oauth_user_id
      * @return type
      */
-    public function getBaseChallengeQuiz($oauth_user_id) {
+    public function getBaseChallengeQuiz($oauth_user_id, $session) {
+        //// get corrected quiz id for this session
+        $sql = "select quiz_id from sbf_users_quiz_correct where oauth_user_id = '${oauth_user_id}' and session='{$session}' ";
+        $result = $this->database->query($sql);
+        $ID = array();
+        $not_in = "";
+        if ($result->num_rows) {
+            while ($row = $result->fetch_assoc()) {
+                $ID[] = $row['quiz_id'];
+            }
+
+            $not_in = " and ID not in (" . implode(",", $ID) . ")";
+        }
+
+
         $data = array("quiz" => NULL);
-        $result = $this->database->query("SELECT * FROM sbfdm_quiz WHERE category!=1 ORDER BY RAND() LIMIT 1");
+        //$result = $this->database->query("SELECT * FROM sbfdm_quiz WHERE category!=1 ORDER BY RAND() LIMIT 1");
+        $result = $this->database->query("SELECT * FROM sbfdm_quiz WHERE 1=1 $not_in ORDER BY RAND() LIMIT 1");
         if ($result->num_rows) {
             while ($row = $result->fetch_assoc()) {
                 //unset($row["category"]);
@@ -319,7 +334,7 @@ class SBF_API {
      * @param type $answer
      * @return string
      */
-    public function checkBaseChallengeQuiz($route_id, $base_id, $base_no, $oauth_user_id, $quiz_id, $answer) {
+    public function checkBaseChallengeQuiz($route_id, $base_id, $base_no, $oauth_user_id, $quiz_id, $answer, $session) {
         // prevent hack
         $data = array("correct" => 'false');
         $quiz = NULL;
@@ -337,13 +352,27 @@ class SBF_API {
             $user_level = $this->getUserLevel($oauth_user_id);
             $this->addScore(1 /*action: correct quiz*/, $user_level, $oauth_user_id , $route_id, $base_id);
 
+            /// insert correct question , prevent random same old question
+            $sql = "insert into sbf_users_quiz_correct ( oauth_user_id, session, quiz_id) values ( '{$oauth_user_id}', '${session}', $quiz_id)";
+            $this->database->query($sql);
+
+
+
         } else {
+            ///// Incorrect!!!
+
+            //// delete correct question for this session
+            $sql = "delete from sbf_users_quiz_correct where oauth_user_id='($oauth_user_id)' ";
+            $this->database->query($sql);
+
             $time = new DateTime();
             $minutes_to_add = 3;
             $time->add(new DateInterval('PT' . $minutes_to_add . 'M'));
             $challenge_wait_time = $time->format('Y-m-d H:i');
             $sql = "UPDATE sbfdm_user_base SET challenge_wait_time='$challenge_wait_time' WHERE oauth_user_id='{$oauth_user_id}' AND base_id='{$base_id}'";
             $result = $this->database->query($sql);
+
+
         }
         return $data;
     }
@@ -467,7 +496,7 @@ class SBF_API {
     }
 
     public function getUserScoreLevel($oauth_user_id){
-      $data = array('score' => NULL, 'level'=> NULL);
+      $data = array('score' => NULL, 'level'=> NULL, 'unlocked_num'=>NULL);
       $score=0;
       $sql = "select sum(score) as s from sbf_users_score where oauth_user_id = '{$oauth_user_id}' ";
       $result = $this->database->query($sql);
@@ -485,11 +514,29 @@ class SBF_API {
         $row = $result->fetch_assoc();
         $level = $row['lv'];
       }
-
       $data['level'] = $level;
+
+      $unlocked=0;
+      $sql = "select count(route_id) as cc from sbfdm_user_base where oauth_user_id='{$oauth_user_id}' and unlocked_status = 'true' ";
+      $result = $this->database->query($sql);
+      if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $unlocked = $row['cc'];
+      }
+      $data['unlocked_num'] = $unlocked;
 
       return $data;
     }
+
+    function generateRandomString($length = 16) {
+			$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+			$charactersLength = strlen($characters);
+			$randomString = '';
+			for ($i = 0; $i < $length; $i++) {
+					$randomString .= $characters[rand(0, $charactersLength - 1)];
+			}
+			return $randomString;
+  	}
 
 }/// end class
 
@@ -523,11 +570,11 @@ if ($_POST['method'] == "get_route_base_user") {
     header('Content-Type: application/json');
     echo(json_encode($response));
 } else if ($_POST['method'] == "get_base_challenge_quiz") {
-    $response = $sbf_api->getBaseChallengeQuiz($_POST['oauth_user_id']);
+    $response = $sbf_api->getBaseChallengeQuiz($_POST['oauth_user_id'], $_POST['session']);
     header('Content-Type: application/json');
     echo(json_encode($response));
 } else if ($_POST['method'] == "check_base_challenge_quiz") {
-    $response = $sbf_api->checkBaseChallengeQuiz($_POST['route_id'], $_POST['base_id'], $_POST['base_no'], $_POST['oauth_user_id'], $_POST['quiz_id'], $_POST['answer']);
+    $response = $sbf_api->checkBaseChallengeQuiz($_POST['route_id'], $_POST['base_id'], $_POST['base_no'], $_POST['oauth_user_id'], $_POST['quiz_id'], $_POST['answer'], $_POST['session']);
     header('Content-Type: application/json');
     echo(json_encode($response));
 } else if ($_POST['method'] == "set_base_user") {

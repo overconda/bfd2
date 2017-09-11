@@ -548,10 +548,19 @@ function renderGuardianQuizzes() {
       amount_num.attr("data-number", score_to_win).html(score_to_win);
     }
 
+
+    var quiz_session = getLocalStorage("sbf_quiz_session");
+    if(quiz_session === undefined){
+      var sess = randomString(32);
+      setLocalStorage('sbf_quiz_session', sess);
+      quiz_session = sess;
+    }
+
+
     // Progress Bar UI
     $(".button-sticky a").off("click").on("click", function () {
       // get - base challenge quiz
-      var params = {'method': 'get_base_challenge_quiz', 'oauth_user_id': sbf_user.oauth_user_id};
+      var params = {'method': 'get_base_challenge_quiz', 'oauth_user_id': sbf_user.oauth_user_id , 'session': quiz_session };
       $.post(api_ws, params, function (response) {
         var quiz = response.quiz;
         base_challenge_quiz_answered = false;
@@ -712,10 +721,14 @@ function renderProfile() {
   $.post(api_ws, params, function (response) {
     var score = response.score;
     var level = response.level;
+    var unlocked_num = response.unlocked_num;
 
     if (score !== null) {
       $('.profile-avatar > .avatar-btn').html("<span>LV</span>" + level);
       $('.profile-user-score').text(score);
+
+
+      $('.profile-main-section > .profile-route-stat > .route-stat-row >  span:nth-child(1)').html('<span data-number="'+ unlocked_num + '" class="numAnimate numSlideIn delay3">'+unlocked_num+'</span>');
     }
   });
 }
@@ -1077,6 +1090,8 @@ function doAnswerChallenge(base_id, quiz_id, answer) {
     });
   }
 
+  var sess = getLocalStorage('sbf_quiz_session');
+
   progressBar.stop().clearQueue().removeAttr('style');
   base_challenge_quiz_answered = true;  // for break progress bar ui
 
@@ -1086,7 +1101,8 @@ function doAnswerChallenge(base_id, quiz_id, answer) {
     "base_no": base.base_no,
     "oauth_user_id": sbf_user.oauth_user_id,
     "quiz_id": quiz_id,
-    "answer": answer};
+    "answer": answer,
+    "session" : sess };
   $.post(api_ws, params, function (response) {
     if (response.correct == 'true') {
       your_score += 1;
@@ -1099,6 +1115,9 @@ function doAnswerChallenge(base_id, quiz_id, answer) {
         $(".your-quizzes span").attr("data-number", your_score);
       }, 400);
     } else {
+      /// cleart correct quiz id session
+      localStorage.removeItem('sbf_quiz_session');
+
       var params = {"method": "set_base_user", "score": your_score, "base_id": base.ID, "oauth_user_id": sbf_user.oauth_user_id};
       $.post(api_ws, params, function (response) {
         if (your_score > score_to_win) {
@@ -1223,4 +1242,15 @@ function doLog(msg) {
   var str = $("#log").html() + msg + "\n";
   $("#log").html(str).change();
   console.log(msg);
+}
+
+
+function randomString(len, an){
+    an = an&&an.toLowerCase();
+    var str="", i=0, min=an=="a"?10:0, max=an=="n"?10:62;
+    for(;i++<len;){
+      var r = Math.random()*(max-min)+min <<0;
+      str += String.fromCharCode(r+=r>9?r<36?55:61:48);
+    }
+    return str;
 }
