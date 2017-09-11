@@ -8,7 +8,7 @@ require_once 'database.php';
 
 /**
  * SBF API Class
- * 
+ *
  */
 class SBF_API {
 
@@ -126,9 +126,9 @@ class SBF_API {
 
         return $data;
     }
-    
+
     /**
-     * Get n base unlock/lock status 
+     * Get n base unlock/lock status
      * @param type $base_ids
      * @param type $oauth_user_id
      * @return string
@@ -145,7 +145,7 @@ class SBF_API {
         foreach($base_ids as $key => $id){
             $data[$id] = "lock";
             if(isset($found[$id])){
-            $data[$id] = "unlock";    
+            $data[$id] = "unlock";
             }
         }
         return $data;
@@ -176,11 +176,11 @@ class SBF_API {
                         SELECT  ' . $latitude . '  AS latpoint,  ' . $longitude . ' AS longpoint,
                         ' . $radius . ' AS radius, ' . $distance_unit . ' AS distance_unit
                     ) AS p ON 1=1
-                WHERE 
-                    z.base_latitude BETWEEN p.latpoint  - (p.radius / p.distance_unit) 
+                WHERE
+                    z.base_latitude BETWEEN p.latpoint  - (p.radius / p.distance_unit)
                     AND p.latpoint  + (p.radius / p.distance_unit)
-                AND 
-                    z.base_longitude BETWEEN p.longpoint - (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint)))) 
+                AND
+                    z.base_longitude BETWEEN p.longpoint - (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
                     AND p.longpoint + (p.radius / (p.distance_unit * COS(RADIANS(p.latpoint))))
             ) AS d
             WHERE distance <= radius
@@ -224,7 +224,7 @@ class SBF_API {
      * @return string
      */
     public function checkBaseUnlockQuiz($route_id, $base_id, $base_no, $oauth_user_id, $quiz_id, $answer) {
-        // prevent hack 
+        // prevent hack
         $data = array("correct" => 'false');
         $quiz = NULL;
 
@@ -245,6 +245,12 @@ class SBF_API {
             $unlocked_status = 'true';
             $time = new DateTime();
             $unlocked_date = $time->format('Y-m-d H:i');
+
+            //// added by Over Sep 10,2017
+            $user_level = $this->getUserLevel($oauth_user_id);
+            $this->addScore(1 /*action: correct quiz*/, $user_level, $oauth_user_id, $route_id, $base_id );
+            $this->addScore(2 /*action: Unlocked*/, $user_level, $oauth_user_id, $route_id, $base_id);
+
         } else {
             $time = new DateTime();
             $minutes_to_add = 3;
@@ -314,7 +320,7 @@ class SBF_API {
      * @return string
      */
     public function checkBaseChallengeQuiz($route_id, $base_id, $base_no, $oauth_user_id, $quiz_id, $answer) {
-        // prevent hack 
+        // prevent hack
         $data = array("correct" => 'false');
         $quiz = NULL;
         $result = $this->database->query("SELECT * FROM sbfdm_quiz WHERE ID='{$quiz_id}' LIMIT 1");
@@ -323,9 +329,14 @@ class SBF_API {
                 $quiz = $row;
             }
         }
-        // base challenge        
+        // base challenge
         if ($quiz['correct_answer'] == $answer) {
             $data["correct"] = 'true';
+
+            //// added by Over Sep 10,2017
+            $user_level = $this->getUserLevel($oauth_user_id);
+            $this->addScore(1 /*action: correct quiz*/, $user_level, $oauth_user_id , $route_id, $base_id);
+
         } else {
             $time = new DateTime();
             $minutes_to_add = 3;
@@ -395,6 +406,10 @@ class SBF_API {
             $challenge_wait_time = $time->format('Y-m-d H:i');
             $sql = "UPDATE sbfdm_user_base SET {$set},challenge_wait_time='{$challenge_wait_time}' WHERE base_id='$base_id}' AND oauth_user_id='{$oauth_user_id}'";
             $this->database->query($sql);
+
+            //// added by Over Sep 10,2017
+            $user_level = $this->getUserLevel($oauth_user_id);
+            $this->addScore(3 /*action: Be Guardian*/, $user_level, $oauth_user_id, $route_id, $base_id);
         } else {
             $time = new DateTime();
             $minutes_to_add = 3;
@@ -405,7 +420,78 @@ class SBF_API {
         }
     }
 
-}
+    /***********************************
+    ************************************
+    Functions added by Over since SEP 10, 2017
+    ************************************
+    ***********************************/
+
+    public function addScore($action_id, $level_id, $oauth_user_id, $route_id=0 , $base_id=0){
+      $now = date('Y-m-d H:i:s');
+      $score=0;
+      $reason = "";
+
+      $sql = "select sbf_score_main.score_value as score , sbf_action.action_name_en as coz ";
+      $sql .= " FROM sbf_score_main ";
+      $sql .= " inner join sbf_action on sbf_score_main.action_id = sbf_action.action_id ";
+      $sql .= " WHERE sbf_score_main.action_id='{$action_id}'  and sbf_score_main.level_num='{$level_id}' ";
+      $sql .= " LIMIT 1";
+
+      $result = $this->database->query($sql);
+      if ($result->num_rows) {
+          while ($row = $result->fetch_assoc()) {
+              $score = $row['score'];
+              $reason = $row['coz'];
+          }
+
+          $sql = "insert into sbf_users_score ";
+          $sql .= " (oauth_user_id, action_id, level, score, txtReason, route_id, base_id, cdate) ";
+          $sql .= " values('{$oauth_user_id}' , $action_id, $level_id, $score , '$reason', $route_id, $base_id,  '$now')";
+          $this->database->query($sql);
+      }
+    }
+
+    public function getUserLevel($oauth_user_id){
+      $level = 1;
+      $sql = "select level_num as lv from sbf_users_level_log where oauth_user_id='{$oauth_user_id}' ";
+      $sql .=" order by cdate desc limit 1";
+    //$this->database->query("insert into debug(txt) values('$sql')");
+
+      $result = $this->database->query($sql);
+      if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $level = $row['lv'];
+      }
+      return $level;
+
+    }
+
+    public function getUserScoreLevel($oauth_user_id){
+      $data = array('score' => NULL, 'level'=> NULL);
+      $score=0;
+      $sql = "select sum(score) as s from sbf_users_score where oauth_user_id = '{$oauth_user_id}' ";
+      $result = $this->database->query($sql);
+      if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $score = $row['s'];
+      }
+      $data['score'] = $score;
+
+      $level = 1;
+      $sql = "select level_num as lv from sbf_users_level_log where oauth_user_id='{$oauth_user_id}' ";
+      $sql .=" order by cdate desc limit 1";
+      $result = $this->database->query($sql);
+      if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $level = $row['lv'];
+      }
+
+      $data['level'] = $level;
+
+      return $data;
+    }
+
+}/// end class
 
 /**
  * Main Program
@@ -448,7 +534,8 @@ if ($_POST['method'] == "get_route_base_user") {
     $response = $sbf_api->setBaseUser($_POST['base_id'], $_POST['oauth_user_id'], $_POST['score']);
     header('Content-Type: application/json');
     echo(json_encode($response));
+} else if ($_POST['method'] == "get_user_score_level") {
+    $response = $sbf_api->getUserScoreLevel($_POST['oauth_user_id']);
+    header('Content-Type: application/json');
+    echo(json_encode($response));
 }
-
-
-

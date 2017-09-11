@@ -1,4 +1,4 @@
-/* 
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -28,7 +28,7 @@ $(document).ready(function () {
   });
   $("#log").remove();
 
-  //signout  
+  //signout
   $("ul.mm-nolistview li:last-child a").bind("click",function(){
     removeLocalStorage('sbf_user');
     removeLocalStorage('sbf_onlocation');
@@ -75,9 +75,9 @@ function initRouteURL() {
 
   // Authorized Control
   if (sbf_user === undefined && (pathname !== subfolder+"/" && pathname !== subfolder + "/index.html")) {
-    window.location = subfolder+'/index.html';  
+    window.location = subfolder+'/index.html';
   }
-  //===== index.html  
+  //===== index.html
   else if (sbf_user !== undefined && (pathname === subfolder + "/" || pathname === subfolder + "/index.html")) {
     window.location = subfolder + '/home.html';
   }
@@ -246,15 +246,15 @@ function renderUnlocked() {
     var user_base = response.user_base;
     var route = response.route;
 
-    // back-prev      
+    // back-prev
     $(".back-prev a").attr("href", $(".back-prev a").attr("href") + "?route_id=" + base.route_id);
 
-    // base info      
+    // base info
     $(".base-header .meta-wrapper").removeClass('unlocked');
     $(".base-header .meta-wrapper .meta-item.meta-status span").html("Locked");
     $(".base-header .meta-wrapper .meta-item.meta-name span").html(route.route_title);
 
-    // set default - no guardian 
+    // set default - no guardian
     //$(".guardian-avatar img").attr("src", subfolder + "/images/no-gaurdian.jpg");
     //$(".guardian-name").html("<span>No the guardian now.</span>" + "You can be the guardian");
 
@@ -386,7 +386,7 @@ function renderUnlockedQuizzes() {
           answer += '<div class="button button-fullwidth"><a onClick="doAnswerUnlock(' + base_id + ',' + quiz.ID + ',4)">' + quiz.answer_4 + ' ' + mark + '</a></div>';
         }
 
-        // base unlock quiz modal 
+        // base unlock quiz modal
         $(".quiz-title").parent().find(".button.button-fullwidth").remove();
         $(".quiz-title").parent().append(answer);
 
@@ -527,7 +527,7 @@ function renderGuardianQuizzes() {
     var user_base = response.user_base;
     var route = response.route;
 
-    // must check wait time before play (in user_base after reponse)    
+    // must check wait time before play (in user_base after reponse)
     if (user_base.challenge_time < 0) {
       window.location = subfolder + '/guardian-quizzes-incorrect.html?base_id=' + base_id;
       return;
@@ -584,7 +584,7 @@ function renderGuardianQuizzes() {
           answer += '<div class="button button-fullwidth"><a onClick="doAnswerChallenge(' + base_id + ',' + quiz.ID + ',4)">' + quiz.answer_4 + ' ' + mark + '</a></div>';
         }
 
-        // base unlock quiz modal 
+        // base unlock quiz modal
         $(".quiz-title").parent().find(".button.button-fullwidth").remove();
         $(".quiz-title").parent().append(answer);
 
@@ -707,6 +707,17 @@ function renderProfile() {
   var sbf_user = getLocalStorage('sbf_user');
   $(".profile-avatar figure img").attr('src', sbf_user.user_profile_photo);
   $(".profile-name").html(sbf_user.user_name);
+
+  var params = {'method': 'get_user_score_level', 'oauth_user_id': sbf_user.oauth_user_id};
+  $.post(api_ws, params, function (response) {
+    var score = response.score;
+    var level = response.level;
+
+    if (score !== null) {
+      $('.profile-avatar > .avatar-btn').html("<span>LV</span>" + level);
+      $('.profile-user-score').text(score);
+    }
+  });
 }
 
 /**
@@ -816,7 +827,7 @@ function calculateOnLocation(sbf_current_gps) {
       $(".onlocation-section").remove(); //simply remove modal
       console.log("rm body.localStorage");
     }
-        
+
 //    console.log(JSON.stringify(exist_sbf_onlocation));
 //    console.log(JSON.stringify(sbf_onlocation));
 //    console.log(same_onlocation);
@@ -828,7 +839,7 @@ function calculateOnLocation(sbf_current_gps) {
       sbf_onlocation.forEach(function (base, index) {
         doLog('Hay! You Near ::: [' + base.ID + '] ' + base.base_title);
       });
-      // on location 1 base found  
+      // on location 1 base found
     } else if (sbf_onlocation.length == 1) {
       doOnlocation1Base();
       base = sbf_onlocation[0];
