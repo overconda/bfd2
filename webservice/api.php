@@ -116,6 +116,10 @@ class SBF_API {
             }
         }
 
+
+
+        $this->checkGuardianMoreThanHour($base_id);
+
         $data["route"] = NULL;
         $result = $this->database->query("SELECT * FROM sbfdm_route WHERE ID={$data["base"]["route_id"]}");
         if ($result->num_rows) {
@@ -125,6 +129,112 @@ class SBF_API {
         }
 
         return $data;
+    }
+
+    function isMoreThanHour($dateStart, $dateStop){
+        $hour = 3600;
+        $d1 = strtotime($dateStart);
+        $d2 = strtotime($dateStop);
+        $diff = $d2 - $d1;
+        if($diff>$hour){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
+    function SecondDiff($dateStart, $dateStop){
+        $hour = 3600;
+        $d1 = strtotime($dateStart);
+        $d2 = strtotime($dateStop);
+        $diff = $d2 - $d1;
+        return $diff;
+    }
+
+
+     function checkGuardianMoreThanHour($base_id){
+      /**********
+      check time at [sbfdm_route_base]
+      Step : (if more than 1 hr)
+      1. update [sbfdm_route_base] for latest guardian, score (to 0)
+      2. update [sbfdm_user_base] guardian_status
+      3. add score (min x score) at [sbf_user_score]
+      ***********/
+      $data=array();
+      $guardian_oauth_id = "";
+      $guardian_time = "";
+      $guardian_score = 0;
+      $now = date('Y-m-d H:i:s');
+      ///// sbfdm_route_base
+
+      $sql = "select sbfdm_route_base.* from sbfdm_route_base ";
+      $sql .= " where ID=$base_id";
+
+      $result = $this->database->query($sql);
+
+      if ($result->num_rows) {
+
+          while ($row = $result->fetch_assoc()) {
+              $guardian_oauth_id = $row['latest_guardian_oauth_user_id'];
+              $guardian_score = $row['latest_guardian_score'];
+              $guardian_time = $row['latest_guardian_date'];
+          }
+
+          $excessTime = $this->isMoreThanHour($now, $guardian_time);
+
+          if($excessTime){
+
+            //// update sbfdm_route_base
+            $oneHour = date('Y-m-d H:i:s', strtotime('+1 hour', strtotime($oldtime)));
+
+            $sql = "update sbfdm_route_base set latest_guardian_date='$oneHour', latest_guardian_score=0 ";
+            $sql .= " where ID=$base_id";
+            $this->database->query($sql);
+
+            /// update sdfdm_user_base
+            $sql = "update sbfdm_user_base set guardian_status = false , guardian_end_date = '$oneHour' where oauth_user_id='$oauth_user_id' and base_id=$base_id ";
+            $this->database->query($sql);
+
+            $guardian_seconds = $this->SecondDiff($now, $guardian_time);
+            $guardian_minutes = ceil($guardian_seconds/60);
+            if($guardian_minutes>60) $guardian_minutes = 60;
+
+            $level = $this->getUserLevel($oauth_user_id);
+
+            ///
+            $perminute=1;
+            $ql = "select score_per_minute from sbf_score_minute_guardian where level_num = $level ";
+            $result = $this->database->query($sql);
+
+            if ($result->num_rows) {
+                while ($row = $result->fetch_assoc()) {
+                  $perminute = $row['score_per_minute'];
+                }
+              }
+
+              $score = $perminute * $guardian_seconds;
+
+              $route_id=0;
+              $ql = "select route_id from sbfdm_route_base where ID = $base_id ";
+              $result = $this->database->query($sql);
+
+
+              if ($result->num_rows) {
+                  while ($row = $result->fetch_assoc()) {
+                    $route_id = $row['route_id'];
+                  }
+                }
+
+            //// update score
+            $sql = "insert into sbf_users_score (oauth_user_id, action_id, level, score,txtReason, base_id, route_id)";
+            $sql .= " values('$oauth_user_id', 5, $level, $score, 'ผลคูณ Guardian Time', $base_id, $route_id)";
+            $result = $this->database->query($sql);
+
+          }
+
+      }
+
     }
 
     /**
