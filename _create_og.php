@@ -42,33 +42,51 @@ fwrite($save, $sourceurl);
 fclose($save);
 
 
+$ResizedProfileImage = $ImageProfile; // reesized save in same name
 /// Avatar circle
 resizeImage($ImageProfile, $ResizedProfileImage, $AvatarWidth, $AvatarWidth);
 
-$dest_image = imagecreatetruecolor($WIDTH, $HEIGHT);
 
 
-$imgAvatar = imagecreatefromjpeg($ResizedProfileImage);
-$imgCard = imagecreatefrompng($myCard);
 
-echo $b;
-exit;
+$urlAvatar = $ResizedProfileImage;
+$urlCard = $myCard;
+
+//$imgAvatar = imagecreatefromjpeg($ResizedProfileImage);
+//$imgCard = imagecreatefrompng($myCard);
+
+$imgAvatar = imagecreatefromjpeg($urlAvatar);
+$imgCard = imagecreatefrompng($urlCard);
+
+echo "IMGAVATAR: " . $urlAvatar;
+echo "<Br>IMGCARD: " . $urlCard;
+echo "<br>";
+echo "<br>Res IMGAVATAR: " . $imgAvatar;
+echo "<Br>Res IMGCARD: " . $imgCard;
+//echo "IMGAVATAR: " . $imgAvatar;
+
+$nowShort = date("ymdHis");
+$outputFile = "ogimage/" . $myCardType . "-" . $user_id . "-" . $nowShort . ".jpg";
 
 //imagecopy($dest_image, $a, 36, 42, 0, 0, $WIDTH, $HEIGHT);
-imagecopymerge($imgCard, $imgAvatar, 0, 0, 36, 42, $WIDTH, $HEIGHT);
+$imgAvatarTemp = imagecreatetruecolor($WIDTH, $HEIGHT);
+imagecopy($imgAvatarTemp, $imgAvatar , 36, 42, 0, 0, $WIDTH, $HEIGHT);
 
-$nowShort("ymdHis");
+imagealphablending($imgCard, true);
+imagesavealpha($imgCard, true);
+imagecopy($imgAvatarTemp, $imgCard , 0, 0, 0, 0, $WIDTH, $HEIGHT);
+echo "<br>";
+//echo "<br>Res DEST: " . $dest;
+//header('Content-Type: image/jpeg');
 
-$outputFile = "ogimage/" . $myCardType . "-" . $user_id . "-" . $nowShort . ".png";
-header('Content-Type: image/jpeg');
-imagejpg($dest_image, $outputFile,100);
+imagejpeg($imgAvatarTemp, $outputFile,100);
 
 
 
 //destroy all the image resources to free up memory
 imagedestroy($imgAvatar);
 imagedestroy($imgCard);
-imagedestroy($dest_image);
+imagedestroy($imgAvatarTemp);
 
 
 function resizeImage($filename, $newName, $max_width, $max_height){
