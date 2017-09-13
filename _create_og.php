@@ -6,28 +6,71 @@ $fontURL = "css/fonts/paytoneone/paytoneone-webfont.ttf";
 
 $_userLevel = 2;
 $_user_id= "10155074868768892"; /// Test
-$_myCardType = "guardian";
 
-$finishFileUrl = createCardGuardian($_user_id, $_myCardType, "Suphajittt", "The Rocker Ave.", $_userLevel);
+
+//// Be Guardian // OK
+//$_myCardType = "guardian";
+//$finishFileUrl = createCardGuardian($_user_id, $_myCardType, "Suphajittt", "The Rocker Ave.", $_userLevel);
+
+//// Complete Route // OK
+//$_myCardType = "complete_route";
+//$finishFileUrl = createCardCompleteRoute($_user_id, $_myCardType, "Suphajittt", "Chok Chai 4", $_userLevel);
+
+///// Level Up // OK
+$_myCardType = "level_up";
+$finishFileUrl = createCardLevelUp($_user_id, $_myCardType, "Suphajittt", $_userLevel);
+
+
+
 echo "<html><body bgcolor='#0'><img src='$finishFileUrl'></body></html>";
 
 
 function createCardGuardian($_user_id, $_myCardType,$userName, $baseName , $level){
   $greeting = "Bravo!";
   $lastText = "Base Guardian";
-  $finishFileUrl = _createCard($_user_id, $_myCardType, $greeting, $userName, $baseName, $level, $lastText);
+  $followText = "is Now";
+  $finishFileUrl = _createCard($_user_id, $_myCardType, $greeting, $userName, $baseName, $level, $lastText, $followText);
+  return $finishFileUrl;
+}
+
+function createCardCompleteRoute($_user_id, $_myCardType,$userName, $routeName , $level){
+  $greeting = "Incredible!";
+  $lastText = "Route";
+  $followText = "is Complete";
+  $finishFileUrl = _createCard($_user_id, $_myCardType, $greeting, $userName, $routeName, $level, $lastText, $followText);
+  return $finishFileUrl;
+}
+
+function createCardLevelUp($_user_id, $_myCardType,$userName, $level){
+  $greeting = "Great Job!";
+  $followText = "is Reached";
+  $finishFileUrl = _createCardLevelUp($_user_id, $_myCardType, $greeting, $userName,  $level, $followText);
   return $finishFileUrl;
 }
 
 
-function _createCard($_user_id, $_myCardType, $greeting, $userName, $venue, $level, $lastText){
+function _createCard($_user_id, $_myCardType, $greeting, $userName, $venue, $level, $lastText, $followText){
   global $fontURL;
   $mergedCardFile = mergeAvatarCard($_user_id, $_myCardType);
   writeTextToImage($mergedCardFile, $level, $fontURL, 16, '#464646', 94,172); //// Level
   writeTextToImage($mergedCardFile, $greeting, $fontURL, 30, '#fad533', 200,68); //// Greeting
-  writeTextToImage($mergedCardFile, $userName . " is now", $fontURL, 18, '#464646', 200,100); //// Name
-  writeTextToImage($mergedCardFile, $venue, $fontURL, 24, '#8d8d8d', 200,140); //// Base Name
-  writeTextToImage($mergedCardFile, $lastText, $fontURL, 24, '#8d8d8d', 200,170); ////
+  writeTextToImage($mergedCardFile, $userName , $fontURL, 18, '#464646', 200,100); //// Name
+  writeTextToImage($mergedCardFile, $followText, $fontURL, 16, '#464646', 200,126); //// Name
+  writeTextToImage($mergedCardFile, $venue, $fontURL, 24, '#8d8d8d', 200,160); //// Base Name
+  writeTextToImage($mergedCardFile, $lastText, $fontURL, 24, '#8d8d8d', 200,190); ////
+  return $mergedCardFile; /// return file url
+}
+
+function _createCardLevelUp($_user_id, $_myCardType, $greeting, $userName, $level, $followText){
+  global $fontURL;
+  $mergedCardFile = mergeAvatarCardLevelUp($_user_id, $_myCardType);
+  writeTextToImage($mergedCardFile, "LV", $fontURL, 18, '#FFFFFF', 158,90); //// Level
+  writeTextToImage($mergedCardFile, $level, $fontURL, 34, '#464646', 162,132); //// Level
+  writeTextToImage($mergedCardFile, $greeting, $fontURL, 30, '#fad533', 240,68); //// Greeting
+  writeTextToImage($mergedCardFile, $userName , $fontURL, 18, '#464646', 240,100); //// Name
+  writeTextToImage($mergedCardFile, $followText, $fontURL, 18, '#464646', 240,126); //// Name
+  writeTextToImage($mergedCardFile, "Beerfinder", $fontURL, 24, '#8d8d8d', 240,160); //// Base Name
+  writeTextToImage($mergedCardFile, "Level " . $level , $fontURL, 24, '#8d8d8d', 240,190); ////
   return $mergedCardFile; /// return file url
 }
 
@@ -98,6 +141,86 @@ function mergeAvatarCard($user_id, $myCardType){
   //imagecopy($dest_image, $a, 36, 42, 0, 0, $WIDTH, $HEIGHT);
   $imgAvatarTemp = imagecreatetruecolor($WIDTH, $HEIGHT);
   imagecopy($imgAvatarTemp, $imgAvatar , 36, 42, 0, 0, $WIDTH, $HEIGHT);
+
+  imagealphablending($imgCard, true);
+  imagesavealpha($imgCard, true);
+  imagecopy($imgAvatarTemp, $imgCard , 0, 0, 0, 0, $WIDTH, $HEIGHT);
+
+
+  imagepng($imgAvatarTemp, $outputFile,0);
+
+
+  //destroy all the image resources to free up memory
+  imagedestroy($imgAvatar);
+  imagedestroy($imgCard);
+  imagedestroy($imgAvatarTemp);
+
+  return $outputFile;
+}
+
+function mergeAvatarCardLevelUp($user_id, $myCardType){
+
+  global $dbh;
+
+  $AvatarWidth = 120;
+  $WIDTH = 476;
+  $HEIGHT = 279;
+
+  $cards = array(
+    "unlocked" => "ogimages_asset/og-unlocked.png",
+    "guardian" => "ogimages_asset/og-guardian.png",
+    "complete_route" => "ogimages_asset/og-complete-route.png",
+    "level_up" => "ogimages_asset/og-level-up.png"
+  );
+
+
+  $myCard = $cards[$myCardType];
+
+  $sql = "select user_profile_photo from sbfdm_oauth where user_id = $user_id ";
+  $stmt = $dbh->prepare($sql);
+  $stmt->execute();
+  $result = $stmt->fetchAll( PDO::FETCH_ASSOC );
+  $avatar = $result[0]['user_profile_photo'];
+
+  //echo "$avatar";
+  $ImageProfile = "ogimage/u-" . $user_id . ".jpg";
+
+  $realpath = getcwd();
+  $ogfile = $realpath . "/" . $ImageProfile;
+
+  $sourceurl = GetTheImage($avatar);
+  $save = fopen($ogfile, "wb"); //this is name of new file that i save
+  fwrite($save, $sourceurl);
+  fclose($save);
+
+
+
+  $ResizedProfileImage = $ImageProfile; // reesized save in same name
+  /// Avatar circle
+  resizeImage($ImageProfile, $ResizedProfileImage, $AvatarWidth, $AvatarWidth);
+
+
+
+
+  $urlAvatar = $ResizedProfileImage;
+  $urlCard = $myCard;
+
+  //echo "<br>URL Avatar : " . $urlAvatar;
+  //echo "<br>URL Card : " . $urlCard;
+
+  //$imgAvatar = imagecreatefromjpeg($ResizedProfileImage);
+  //$imgCard = imagecreatefrompng($myCard);
+
+  $imgAvatar = imagecreatefromjpeg($urlAvatar);
+  $imgCard = imagecreatefrompng($urlCard);
+
+
+  $nowShort = date("ymdHis");
+  $outputFile = "ogimage/" . $myCardType . "-" . $user_id . "-" . $nowShort . ".png";
+
+  //imagecopy($dest_image, $a, 36, 42, 0, 0, $WIDTH, $HEIGHT);
+  $imgAvatarTemp = imagecreatetruecolor($WIDTH, $HEIGHT);
+  imagecopy($imgAvatarTemp, $imgAvatar , 28, 42, 0, 0, $WIDTH, $HEIGHT);
 
   imagealphablending($imgCard, true);
   imagesavealpha($imgCard, true);
