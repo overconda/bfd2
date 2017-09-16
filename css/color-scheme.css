@@ -44,7 +44,11 @@ h1, h2, h3, h4, h5, h6,
 .league-filter a:hover:after,
 .result-pts-num,
 .home-content-wrapper .result-info-num,
-.accordion-num {
+.accordion-num,
+.challenge-countdown,
+.quiz-about,
+.notify-popup-heading,
+.notify-ended-time {
 	color: #ffd503;
 }
 
@@ -77,7 +81,8 @@ h1, h2, h3, h4, h5, h6,
 .how-to .full-page-wrapper,
 .how-to-details,
 .accordion-desc,
-.accordion-wrapper.accordion-active .accordion-header .accordion-box > span {
+.accordion-wrapper.accordion-active .accordion-header .accordion-box > span,
+.extra-pts-topbar {
 	background-color: #ffd503;
 }
 
@@ -91,7 +96,10 @@ h1, h2, h3, h4, h5, h6,
 .image-approved img,
 .ranking-image img,
 .on-onlocation-challenge .onlocation-avatar img,
-#account-status img {
+#account-status img,
+.situation-pts,
+.situation-pts-icon,
+.notify-avatar img {
 	border-color: #ffd503;
 }
 
