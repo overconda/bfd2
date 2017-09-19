@@ -73,6 +73,8 @@ class SBF_API {
     public function getBaseUser($base_id, $oauth_user_id) {
         $data = array("base" => NULL, "user_base" => NULL);
 
+        $this->checkGuardianMoreThanHour($base_id);
+
         // get base info
         $result = $this->database->query("SELECT * FROM sbfdm_route_base WHERE ID={$base_id}");
         if ($result->num_rows) {
@@ -118,7 +120,7 @@ class SBF_API {
 
 
 
-        $this->checkGuardianMoreThanHour($base_id);
+
 
         $data["route"] = NULL;
         $result = $this->database->query("SELECT * FROM sbfdm_route WHERE ID={$data["base"]["route_id"]}");
@@ -181,7 +183,7 @@ class SBF_API {
               $guardian_time = $row['latest_guardian_date'];
           }
 
-          $excessTime = $this->isMoreThanHour($now, $guardian_time);
+          $excessTime = $this->isMoreThanHour($guardian_time, $now);
 
           if($excessTime){
 

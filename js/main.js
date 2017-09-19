@@ -313,6 +313,21 @@ function renderUnlocked() {
       if (base.guardian !== null) {
         $(".guardian-avatar img").attr("src", base.guardian.user_profile_photo);
         $(".guardian-name").html("<span>The guardian is</span>" + base.guardian.user_name);
+
+        /// clear line after NAME
+        $(".guardian-name").css('padding-bottom', '0px');
+        $(".guardian-name").css('border-bottom', '0');
+
+
+        $(".guardian-score").html("<span>" + base.latest_guardian_score + " Pts.</span>");
+        //// Add line after SCORE
+        $(".guardian-score").css('padding-bottom', '12px');
+        $(".guardian-score").css('margin-bottom', '20px');
+        $(".guardian-score").css('border-bottom', '2px dashed #a5a9a7');
+
+
+        console.log('----- user base -----');
+        console.log(user_base);
       }
 
       // locked / unlocked info
@@ -546,6 +561,7 @@ function renderUnlockedCongraturation() {
  * @returns {undefined}
  */
 function renderGuardianQuizzes() {
+  console.log('Enter render gd qzzzzzz');
   var pair = window.location.search.substring(1).split("=");
   var base_id = pair[1];
 
@@ -566,6 +582,8 @@ function renderGuardianQuizzes() {
     window.location = subfolder + '/unlocked.html?base_id=' + base_id;
     return;
   }
+
+
 
   // get - sbf_user & bases status
   var params = {'method': 'get_base_user', 'base_id': base_id, 'oauth_user_id': sbf_user.oauth_user_id};
@@ -589,6 +607,9 @@ function renderGuardianQuizzes() {
       $(".base-header h1").html(base.base_title);
       $(".base-header .meta-item.meta-route span").html(route.route_title);
       $(".unlock-caption span").html("'" + sbf_user.user_name + "'");
+
+      console.log('--- score to win---');
+      console.log(base);
 
       score_to_win = base.latest_guardian_score;
       your_quizzes.attr("data-number", your_score).html(your_score);
@@ -988,8 +1009,11 @@ function doChooseNBase(sbf_onlocation) {
     sbf_onlocation.forEach(function (base, index) {
       var elem = '<div class="button btn-lock animated fadeInLeft"><a href="unlocked-quizzes.html?base_id='+base.ID+'">'+base.base_title+'</a></div>';
       if (response[base.ID] == "unlock") {
-        elem = '<div class="button btn-unlock animated fadeInRight"><a href="guardian-quizzes.html?base_id='+base.ID+'">'+base.base_title+'</a></div>';
+        //elem = '<div class="button btn-unlock animated fadeInRight"><a href="guardian-quizzes.html?base_id='+base.ID+'">'+base.base_title+'</a></div>';
+        elem = '<div class="button btn-unlock animated fadeInRight"><a href="unlocked.html?base_id='+base.ID+'">'+base.base_title+'</a></div>';
       }
+
+
       $(".loc-btn-group").prepend(elem);
     });
     //$(".loc-btn-group").append(btn_close);

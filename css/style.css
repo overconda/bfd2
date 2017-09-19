@@ -6610,6 +6610,23 @@ a:active {
 	animation-delay: 2.2s;
 }
 
+.on-loc-stand-alone #on-location-notify {
+	visibility: visible;
+}
+
+.on-loc-stand-alone .onlocation-chal-base.on-location-group,
+.on-loc-stand-alone .onlocation-name-group.on-location-group {
+	animation-delay: 2.4s;
+}
+
+.on-loc-stand-alone .onlocation-avatar.on-location-group {
+	animation-delay: 2s;
+}
+
+.on-loc-stand-alone .onlocation-btn-group.on-location-group {
+	animation-delay: 2.8s;
+}
+
 
 /********************************************
 13.0 How to play
