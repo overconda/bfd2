@@ -27,10 +27,19 @@ if($_SESSION['is_admin'] != 'finderAdmiN'){
       td{
         padding: 4px;
       }
-
+      #route_name{
+        width:300px;
+      }
     </style>
   </head>
   <body>
+    <form method="post" action="_add_route.php">
+      <center>
+        Route Name : <input type="text" name="route_name" id="route_name" class="form-control">
+        <br><button type="submit">Add New</button>
+        <br><Br>
+      </center>
+    </form>
     <?php
     $sql = "select quiz.qzid,qz_title, quiz_cate.name_th from quiz ";
     $sql .= " inner join quiz_cate on quiz.qz_cate_id = quiz_cate.cate_id ";
