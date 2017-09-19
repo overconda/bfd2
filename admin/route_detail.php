@@ -26,7 +26,7 @@ if($_SESSION['is_admin'] != 'finderAdmiN'){
      </style>
    </head>
    <body>
-     <form method="post" action="_edit_route.php">
+     <form method="post" action="_edit_route.php" enctype="multipart/form-data">
      <?php
 $id=$_GET['id'];
 $sql = "select * from sbfdm_route where ID = $id";
@@ -38,17 +38,31 @@ $title = $result[0]['route_title'];
 $svg = $result[0]['svg'];
 //$complete_point = $result[0]['complete_point'];
 $extra_point = $result[0]['extra_point'];
+$image = $result[0]['image'];
 
 
       ?>
       <table border="0" align="center" width="70%">
         <tr>
             <td align="right">Route Name</td>
-            <td><input type="text" name="route_title" value="<?echo $title?>" class="w100"></td>
+            <td><input type="text" name="route_title" value="<?php echo $title?>" class="w100"></td>
         </tr>
         <tr>
             <td valign="top" align="right">svg</td>
-            <td><textarea name="svg" cols="60" rows="20" class="w100"><?echo $svg;?></textarea></td>
+            <td><textarea name="svg" cols="60" rows="20" class="w100"><?php echo $svg;?></textarea></td>
+        </tr>
+        <tr>
+          <td valign="top" align="right">Image</td>
+          <td>
+            <?php
+            if(trim($image)!=""){
+              echo "<img src='../{$image}'>";
+              echo "<br>";
+            }
+
+             ?>
+             <input type="file" name="RouteImage">
+          </td>
         </tr>
       </table>
 
@@ -122,7 +136,7 @@ echo $out;
 
          ?>
       </table>
-      <input type="hidden" name="svg">
+      <input type="hidden" name="id" value="<?php echo $id;?>">
       <p align=center><button type=submit> Save </button></p>
     </form>
    </body>
