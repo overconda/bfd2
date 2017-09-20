@@ -31,9 +31,9 @@ $(document).ready(function () {
     var basesHTML = decodeHtml(route.routes_html);
     completed_point = route.completed_point;
 
-    //console.log(route);
+    console.log(route);
     //console.log(basesHTML);
-    console.log(completed_point);
+    //console.log(completed_point);
 
     routeHTML = routeHTML.replace('[xxRouteBaseMarkerxx]', basesHTML);
 

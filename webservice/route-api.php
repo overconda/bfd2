@@ -49,6 +49,7 @@ class ROUTE_API {
     }
 
 
+
     function generateRandomString($length = 16) {
 			$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 			$charactersLength = strlen($characters);
