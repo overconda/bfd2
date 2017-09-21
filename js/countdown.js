@@ -33,7 +33,7 @@ jQuery(document).ready(function() {
 		$('.button a').text('Challenge Again');
 	}
 
-	var api_countdown = "https://singhabeerfinder.com/bfd2/webservice/countdown.php";
+	var api_countdown = "https://singhabeerfinder.com/webservice/countdown.php";
 	var myInterval;
 
 	var base_id = param['base_id'];

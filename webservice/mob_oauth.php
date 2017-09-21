@@ -8,7 +8,7 @@ require_once 'database.php';
 
 define("TWITTER_CONSUMER_SECRETE","dDOOHGhUngjdnNr1pFDCGk6asVfaai4FgSlAo89wgwsLuAjJtR");
 define("TWITTER_CONSUMER_KEY","TaPR4ZpfTewzAhui0aqFQHb5E");
-define("TWITTER_CALLBACK","https://singhabeerfinder.com/bfd2/");
+define("TWITTER_CALLBACK","https://singhabeerfinder.com/");
 
 /**
  * OAuth wrapper

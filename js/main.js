@@ -7,10 +7,12 @@
 /* =============================================
  Kergrit Start Programe Here
  ================================================ */
-var subfolder = '/bfd2';
+//var subfolder = '/bfd2';
+var subfolder = '';
 var production = true;
 var gps_options = {enableHighAccuracy: true, timeout: 10000, maximumAge: 0};
-var api_ws = "https://singhabeerfinder.com/bfd2/webservice/api.php";
+var api_ws = "https://www.singhabeerfinder.com/webservice/api.php";
+//var api_ws = "webservice/api.php";
 var quiz_time = 10000;
 var base_unlock_quiz_answered = false;
 var quizProgress = $('.quiz-progress');

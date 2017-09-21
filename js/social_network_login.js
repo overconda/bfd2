@@ -1,8 +1,8 @@
 
-var oauth_ws = "https://singhabeerfinder.com/bfd2/webservice/oauth.php";
+var oauth_ws = "https://www.singhabeerfinder.com/webservice/oauth.php";
 var facebook_appId = '371680153249243';
 var instagram_clientId = '6e043e43278142898505e69f8f695ca5';
-var instagram_callback = "https://singhabeerfinder.com/bfd2/";
+var instagram_callback = "https://www.singhabeerfinder.com/";
 
 /********************************
  * Facebook Login

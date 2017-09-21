@@ -8,30 +8,30 @@ require_once 'database.php';
 
 define("TWITTER_CONSUMER_SECRETE","dDOOHGhUngjdnNr1pFDCGk6asVfaai4FgSlAo89wgwsLuAjJtR");
 define("TWITTER_CONSUMER_KEY","TaPR4ZpfTewzAhui0aqFQHb5E");
-define("TWITTER_CALLBACK","https://singhabeerfinder.com/bfd2/");
+define("TWITTER_CALLBACK","https://www.singhabeerfinder.com/");
 
 /**
  * OAuth wrapper
  * 1. collection protocol_parameter
- * 2. key sorting array protocol_parameter - ksort() 
+ * 2. key sorting array protocol_parameter - ksort()
  * 3. encode key and value array protocol_parameter - rawurlencode()
  * 4. create protocol_parameter_string - key=value&key2=value2.....
  * 5. encode protocol_parameter_string - rawurlencode()
- * 6. encode request_uri - rawurlencode() 
+ * 6. encode request_uri - rawurlencode()
  * 7. create signature base string - POST&request_uri&protocal_parameter_string
  * 8. encode oauth_consumer_secrete and oauth_token
  * 9. create key string for hash_hmac - oauth_consumer_secrete&oauth_token_secret
  * 10. create oauth_signature with hash_hmac and base64_encode
  * 11. add oauth_signature to protocal_parameter and ksort()
  * 12. create authorization_header - key="value",key2="value2".....
- * 
+ *
  * https://tools.ietf.org/html/rfc5849#section-3.4.1
  */
 
 /**
- * 
+ *
  * generateOAuthSignature
- * 
+ *
  * @param type $request_uri
  * @param type $protocol_parameter
  * @param type $http_protocol
@@ -75,7 +75,7 @@ function generateOAuthSignature($request_uri, $protocol_parameter, $http_protoco
 
 /**
  * doRequest
- * 
+ *
  * @param type $request_uri
  * @param type $http_protocol
  * @param type $authorization_header
@@ -114,10 +114,10 @@ function doRequest($request_uri, $http_protocol, $authorization_header, $postvar
 class TwitterAuth {
     /*
      * Twitter OAuth
-     * 
+     *
      * 1. get request token -> oauth_token, oauth_token_secret, oauth_callback_confirmed
      * 2. redirect user to twitter oauth screen - https://api.twitter.com/oauth/authenticate?oauth_token=?
-     * 3. received oauth_verifier 
+     * 3. received oauth_verifier
      * 4. get access token -> oauth_token, oauth_token_secret, user_id, screen_name
      * 5. ready call api
      */
@@ -181,7 +181,7 @@ class TwitterAuth {
 
 /**
  * insertOrUpdateUserOAuth
- * 
+ *
  * @param type $data
  * @return type
  */
@@ -300,7 +300,7 @@ if ($_POST['platform'] == "twitter") {
      * $ig_data['username']
      * $ig_data['profile_picture']
      * $ig_data['full_name']
-     * 
+     *
      */
     $result = array();
     $data = array();

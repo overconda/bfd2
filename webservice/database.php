@@ -2,13 +2,13 @@
 
 /**
  * Database Class
- * 
+ *
  */
 
 define("SBF_DB_HOST", "localhost");
-define("SBF_DB_USER", "pophonic_bfd2");
-define("SBF_DB_PASSWORD", "BFD2db#2017");
-define("SBF_DB_NAME", "pophonic_bfd2");
+define("SBF_DB_USER", "singhabeerfinder");
+define("SBF_DB_PASSWORD", "SBFDftp#2017");
+define("SBF_DB_NAME", "beerfinder");
 
 class Database {
 
@@ -24,19 +24,19 @@ class Database {
     }
 
     function insert($table, $fields = array()) {
-        
+
     }
 
     function update($table, $fields = array(), $where = array()) {
-        
+
     }
 
     function delete($table, $where = array()) {
-        
+
     }
 
     function select($table, $where = array()) {
-        
+
     }
 
     function query($sql, $return_data = FALSE) {
