@@ -46,6 +46,7 @@ $('.route-item-wrapper').html(''); /// clear
           thisHtml = thisHtml.replace('[xxPTSxx]', completed_point);
           thisHtml = thisHtml.replace('[xxRouteBaseMarkerxx]', bases_html);
           thisHtml = thisHtml.replace('data-bg-image="images/upload/route-bg-01.jpg"', 'style="background:url(\'' + background + '\'"');
+          thisHtml = thisHtml.replace('id=x','id=' + route_id);
 
           $('.route-item-wrapper').append(thisHtml);
           console.log(thisHtml);
