@@ -30,7 +30,7 @@ $stmt->execute();
 
 
 
-$sql = "update sbfdm_route set route_title='$title' , svg='$svg' where ID=$id";
+$sql = "update sbfdm_route set route_title='$title' , svg='$svg' ,active=1 where ID=$id";
 $stmt = $dbh->prepare($sql);
 $stmt->execute();
 
@@ -72,7 +72,7 @@ $h = htmlspecialchars($basesHTML, ENT_QUOTES);
 
 
 
-$sql = "update sbfdm_route set routes_html='$h' where ID=$id";
+$sql = "update sbfdm_route set bases_html='$h' where ID=$id";
 $stmt = $dbh->prepare($sql);
 $stmt->execute();
 
