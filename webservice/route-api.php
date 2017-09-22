@@ -37,17 +37,21 @@ class ROUTE_API {
             $data["route"] = $row;
         }
 
-        /*
-        // get base user info
-        $result = $this->database->query("SELECT * FROM sbfdm_route_base WHERE route_id={$route_id}");
-        $basesHTML = "";
-
-        $data['basesHTML'] = $basesHTML;
-        */
 
         return $data;
     }
 
+    public function getAllRoutes($orderby , $order ){
+      $data = array();
+      $ORDER = " order by $orderby $order";
+
+      $sql = "select * from sbfdm_route where active=1 $ORDER";
+      $result = $this->database->query($sql);
+        while($row = $result->fetch_assoc()){
+          $data['route'][]=$row;
+        }
+      return $data;
+    }
 
 
     function generateRandomString($length = 16) {
@@ -69,6 +73,10 @@ $route_api = new ROUTE_API();
 
 if ($_POST['method'] == "get_route_svg") {
     $response = $route_api->getRouteSvg($_POST['route_id']);
+    header('Content-Type: application/json');
+    echo(json_encode($response));
+} else if ($_POST['method'] == "get_all_routes") {
+    $response = $route_api->getAllRoutes($_POST['orderby'], $_POST['order']);
     header('Content-Type: application/json');
     echo(json_encode($response));
 } /*else if ($_POST['method'] == "get_base_user") {

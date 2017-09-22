@@ -1,4 +1,4 @@
-var route_api = "https://singhabeerfinder.com/webservice/route-api.php";
+var route_api = "https://www.singhabeerfinder.com/webservice/route-api.php";
 
 function decodeHtml(str)
 {
@@ -14,57 +14,43 @@ function decodeHtml(str)
 }
 
 $(document).ready(function () {
-  var route_id =1;
-  var routeHTML = "";
-  var routeSvgHTML = "";
+  var arrRoutes = [1,5];
   var baseHTML = "";
+  var allHTML = "";
   var completed_point = 0;
 
   routeHTML = $('#route-id-x').html();
+$('.route-item-wrapper').html(''); /// clear
 
-  // get - sbf_user & bases status
-  var params = {'method': 'get_route_svg', 'route_id': route_id};
-  $.post(route_api, params, function (response) {
+  $.get("route-part.html", function( my_var ) {
+    var partHtml = my_var;
 
-    var route = response.route;
-    //var bases = response.bases;
-    var basesHTML = decodeHtml(route.routes_html);
-    completed_point = route.completed_point;
 
-    //console.log(route);
-    //console.log(basesHTML);
-    console.log(completed_point);
+      var routeSvgHTML;
+      var baseHTML;
+      var completed_point;
+      var background;
 
-    routeHTML = routeHTML.replace('[xxRouteBaseMarkerxx]', basesHTML);
+      var params = {'method': 'get_all_routes', 'orderby': 'ID', 'order': 'desc'};
+      $.post(route_api, params, function (response) {
+        $.each(response.route,function(index, route){
+          var route_id = route.ID;
+          var completed_point = route.completed_point;
+          var svg = decodeHtml(route.svg);
+          var bases_html = decodeHtml(route.bases_html);
+          var background = route.image;
 
-    //console.log(routeHTML);
+          var thisHtml = partHtml;
+          thisHtml = thisHtml.replace('route-id-x','route-id-' + route_id);
+          thisHtml = thisHtml.replace('[xxSVGxx]',svg);
+          thisHtml = thisHtml.replace('[xxPTSxx]', completed_point);
+          thisHtml = thisHtml.replace('[xxRouteBaseMarkerxx]', bases_html);
+          thisHtml = thisHtml.replace('data-bg-image="images/upload/route-bg-01.jpg"', 'style="background:url(\'' + background + '\'"');
 
-    routeSvgHTML = route['svg'];
-    var imageBackground = route['image'];
-    //routeHTML = routeHTML.replace('images/upload/route-bg-01.jpg', imageBackground);
-    //console.log(routeHTML);
+          $('.route-item-wrapper').append(thisHtml);
+          console.log(thisHtml);
+        });
+      });
 
-    var svg = decodeHtml(route.svg);
-    //console.log(route.svg);
-    //console.log(svg);
-    //$('#route-id-' + route_id +' .route-path').html(svg);
-    routeHTML = routeHTML.replace('[xxSVGxx]',svg);
-    //$('.route-pts').html(completed_point + '<span>PTS.</span>');
-    /*$('.route-item-details > .route-pts').html(function(){
-      var ret = completed_point + '<span>PTS.</span>';
-      console.log('ret: ' + ret);
-      return ret;
-    });
-    */
-    routeHTML = routeHTML.replace('[xxPTSxx]', completed_point);
-
-    $('#route-id-x').html('<div id="route-id-' + route_id + '">' + routeHTML + "</div>");
-    $('#route-id-' + route_id + ' .bg-image').css('background-image', function(){
-      var bg = ('url(' + imageBackground + ')');
-      return bg;
-    });
-
-    //console.log(routeHTML);
-
-  });
+}, 'html');
 });
