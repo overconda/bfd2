@@ -5,9 +5,9 @@
  *
  */
 
-define("SBF_DB_HOST", "localhost");
-define("SBF_DB_USER", "singhabeerfinder");
-define("SBF_DB_PASSWORD", "SBFDftp#2017");
+define("SBF_DB_HOST", "mysql.singhabeerfinder.com");
+define("SBF_DB_USER", "beerfinder");
+define("SBF_DB_PASSWORD", "SBFDdb#2017");
 define("SBF_DB_NAME", "beerfinder");
 
 class Database {
