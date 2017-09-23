@@ -313,6 +313,8 @@ function renderUnlocked() {
 
       // guradian / no guardian info
       if (base.guardian !== null) {
+        console.log('Guardian: ' );
+        console.log(base.guardian);
         $(".guardian-avatar img").attr("src", base.guardian.user_profile_photo);
         $(".guardian-name").html("<span>The guardian is</span>" + base.guardian.user_name);
 
@@ -840,7 +842,7 @@ function initLocationProcedure() {
  * @returns {undefined}
  */
 function doTrackGPS(position) {
-  doLog("doTrackGPS");
+  //doLog("doTrackGPS");
   var sbf_user = getLocalStorage('sbf_user');
 
   // 1. get current & latest user location
@@ -857,14 +859,14 @@ function doTrackGPS(position) {
   if (distance_in_km > distance_check) {
     setLocalStorage('sbf_latest_gps', sbf_current_gps);
     removeLocalStorage("sbf_nearby_bases");
-    doLog("[DEL] [" + distance_in_km + " km] sbf_nearby_bases");
+    //doLog("[DEL] [" + distance_in_km + " km] sbf_nearby_bases");
   }
 
   // 3. check has exist nearby routes / bases in localStorage
   if (getLocalStorage('sbf_nearby_bases') === undefined) {
     var params = {"method": "get_nearby_route_base", "sbf_current_gps": sbf_current_gps};
     $.post(api_ws, params, function (response) {
-      doLog("[INS] sbf_nearby_bases");
+      //doLog("[INS] sbf_nearby_bases");
       setLocalStorage('sbf_nearby_bases', response.nearby_base);
       calculateOnLocation(sbf_current_gps);
     });
@@ -879,9 +881,9 @@ function doTrackGPS(position) {
  * @returns {undefined}
  */
 function calculateOnLocation(sbf_current_gps) {
-  doLog("calculateOnLocation");
+  //doLog("calculateOnLocation");
   var d = new Date();
-  doLog(d.getTime() + " ===================================");
+  //doLog(d.getTime() + " ===================================");
 
   var sbf_nearby_bases = getLocalStorage('sbf_nearby_bases');
   var sbf_onlocation = [];
@@ -896,19 +898,19 @@ function calculateOnLocation(sbf_current_gps) {
       if (distance_in_km <= distance_check) {
         sbf_onlocation.push(base);
       }
-      doLog('You Far ::: [' + base.ID + '] [' + distance_in_km.toFixed(4) + ' KM] ' + base.base_title);
+      //doLog('You Far ::: [' + base.ID + '] [' + distance_in_km.toFixed(4) + ' KM] ' + base.base_title);
     });
 
     var exist_sbf_onlocation = getLocalStorage("sbf_onlocation");
     var same_onlocation = false;
     if (JSON.stringify(exist_sbf_onlocation) === JSON.stringify(sbf_onlocation)) {
       $('body').addClass('localStorage');
-      console.log("add body.localStorage");
+      //console.log("add body.localStorage");
       same_onlocation = true;
     } else {
       $('body').removeClass('localStorage');
       $(".onlocation-section").remove(); //simply remove modal
-      console.log("rm body.localStorage");
+      //console.log("rm body.localStorage");
     }
 
 //    console.log(JSON.stringify(exist_sbf_onlocation));
@@ -920,13 +922,13 @@ function calculateOnLocation(sbf_current_gps) {
     if (sbf_onlocation.length > 1) {
       doOnlocationNBase();
       sbf_onlocation.forEach(function (base, index) {
-        doLog('Hay! You Near ::: [' + base.ID + '] ' + base.base_title);
+        //doLog('Hay! You Near ::: [' + base.ID + '] ' + base.base_title);
       });
       // on location 1 base found
     } else if (sbf_onlocation.length == 1) {
       doOnlocation1Base();
       base = sbf_onlocation[0];
-      doLog('Hay! You Near ::: [' + base.ID + '] ' + base.base_title);
+      //doLog('Hay! You Near ::: [' + base.ID + '] ' + base.base_title);
     } else {
       outLocation();
       removeLocalStorage("sbf_onlocation");
@@ -1125,12 +1127,68 @@ function doChallengeBase(data) {
   var route = data.route;
   var base = data.base;
   var user_base = data.user_base;
+  var latest = user_base.guardian_start_date.toString();
+
+  /*
+  console.log(route);
+  console.log(base);
+  */
+  console.log(user_base);
+
+  //// get guardian level
+  var guardian_level=0;
+  var params = {'method': 'get_user_score_level', 'oauth_user_id': base.guardian.oauth_user_id};
+  $.post(api_ws, params, function (response) {
+    //var score = response.score;
+    guardian_level = response.level;
+  });
+
+  /// calculate guardian minutes
+  var hour = 60*60*1000;
+  var gmt = 14;
+  var offset = gmt * hour;
+
+
+
+  //latest = '2017-09-23 11:36:45';
+  console.log('offset: ' + offset);
+
+  var d = new Date()
+var datestring = d.getFullYear() + "-" + ("0" +(d.getMonth()+1)).slice(-2) + "-" + d.getDate() + " " +
+("0" +d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2);
+  //latest.setHours(latest.getHours()+gmt);
+
+  var now = new Date();
+  var dateOld = parseDate(latest);
+  var dateNew = parseDate(now);
+
+  console.log('Latest: ' + dateOld);
+  console.log('Now: ' + dateNew);
+  //var diff = Math.abs(new Date() - new Date(latest)); // latest to NOW
+  var diff = Math.abs(dateNew - dateOld); // latest to NOW
+  console.log('diff: ' + diff);
+  diff-=offset;
+  console.log('diff-offset: ' + diff);
+  var minutes = Math.floor((diff/1000)/60);
+  console.log('minutes: ' + minutes);
+  if(minutes<0){
+    minutes = 0;
+  }
+  if(minutes>60){
+    minutes = 0;
+  }
 
   if (base.guardian !== null) {
+    console.log('in doChallengeBase..');
+    console.log(latest);
+    console.log(minutes);
+    $(".onlocation-avatar .avatar-btn").html("<span>LV</span>" + guardian_level);
     $(".onlocation-avatar img.img-fit").attr("src", base.guardian.user_profile_photo);
     $(".onlocation-chal-name").html(base.guardian.user_name);
+    //$(".onlocation-chal-name").html(datestring); //debug
     $(".onlocation-chal-base").html(base.base_title + '<span>is seizing by</span>');
     $(".onlocation-pts-wrap .onlocation-pts-col:eq(0)").html(base.latest_guardian_score + '<span>Points</span>');
+    $(".onlocation-pts-wrap .onlocation-pts-col:eq(1)").html(minutes + '<span>Minutes</span>');
   } else {
     $(".onlocation-chal-base").html(base.base_title + '<span>NO THE GUARDIAN NOW.</span>');
   }
@@ -1210,7 +1268,7 @@ function doAnswerChallenge(base_id, quiz_id, answer) {
  */
 function watchCurrentPosition() {
   var positionTimer = navigator.geolocation.watchPosition(function (position) {
-    doLog("[watchPosition] " + position.coords.latitude + ", " + position.coords.longitude);
+    //doLog("[watchPosition] " + position.coords.latitude + ", " + position.coords.longitude);
     doTrackGPS(position);
   });
 }
@@ -1326,4 +1384,12 @@ function randomString(len, an){
       str += String.fromCharCode(r+=r>9?r<36?55:61:48);
     }
     return str;
+}
+
+function parseDate(date) {
+  const parsed = Date.parse(date);
+  if (!isNaN(parsed)) {
+    return parsed;
+  }
+  return Date.parse(date.replace(/-/g, '/').replace(/[a-z]+/gi, ' '));
 }
