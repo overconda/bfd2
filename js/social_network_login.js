@@ -1,6 +1,7 @@
 
 var oauth_ws = "https://www.singhabeerfinder.com/webservice/oauth.php";
-var facebook_appId = '371680153249243';
+//var facebook_appId = '371680153249243';
+var facebook_appId = '1413391252089699';
 var instagram_clientId = '6e043e43278142898505e69f8f695ca5';
 var instagram_callback = "https://www.singhabeerfinder.com/";
 
@@ -24,19 +25,19 @@ window.fbAsyncInit = function () {
 };
 
 /**
- * 
+ *
  * @returns {undefined}
  */
 function facebookLogin() {
   FB.getLoginStatus(function (response) {
     if (response.status == "not_authorized" || response.status == "unknown") {
       FB.login(function (response) {
-        // handle the response                    
+        // handle the response
         if (response.status === 'connected') {
           // Logged into your app and Facebook.
           doFacebookAPI();
         } else {
-          // The person is not logged into this app or we are unable to tell. 
+          // The person is not logged into this app or we are unable to tell.
         }
       }, {scope: 'public_profile,email'});
     } else if (response.status == "connected") {
@@ -46,7 +47,7 @@ function facebookLogin() {
 }
 
 /**
- * 
+ *
  * @returns {undefined}
  */
 function facebookLogout() {
@@ -57,7 +58,7 @@ function facebookLogout() {
 }
 
 /**
- * 
+ *
  * @returns {undefined}
  */
 function doFacebookAPI() {
@@ -129,16 +130,16 @@ function twitterAPI() {}
 
 
 /********************************
- * Instagram Login   
- * 
- * Client-Side (Implicit) Authentication           
- *  
- * 1. [get token] 
+ * Instagram Login
+ *
+ * Client-Side (Implicit) Authentication
+ *
+ * 1. [get token]
  * https://api.instagram.com/oauth/authorize/?client_id=CLIENT-ID&redirect_uri=REDIRECT-URI&response_type=code
- * 
- * 3. [call api] 
+ *
+ * 3. [call api]
  * https://api.instagram.com/v1/users/self/?access_token=ACCESS-TOKEN
- *  
+ *
  ********************************/
 
 function instagramLogin() {
@@ -170,7 +171,7 @@ $(document).ready(function () {
 });
 
 /**
- * 
+ *
  * @returns {undefined}
  */
 function showTermsModal() {
@@ -178,7 +179,7 @@ function showTermsModal() {
 }
 
 /**
- * 
+ *
  * @param {type} user
  * @returns {undefined}
  */
@@ -187,7 +188,7 @@ function saveUserData(user) {
 }
 
 /**
- * 
+ *
  * @param {type} variable
  * @returns {getQueryVariable.pair|Boolean}
  */
@@ -204,7 +205,7 @@ function getQueryVariable(variable) {
 }
 
 /**
- * 
+ *
  * @param {type} variable
  * @returns {getHashVariable.pair|Boolean}
  */

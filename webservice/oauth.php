@@ -6,8 +6,11 @@ header('Access-Control-Allow-Methodhs: GET, POST, PUT');
 
 require_once 'database.php';
 
-define("TWITTER_CONSUMER_SECRETE","dDOOHGhUngjdnNr1pFDCGk6asVfaai4FgSlAo89wgwsLuAjJtR");
-define("TWITTER_CONSUMER_KEY","TaPR4ZpfTewzAhui0aqFQHb5E");
+//define("TWITTER_CONSUMER_SECRETE","dDOOHGhUngjdnNr1pFDCGk6asVfaai4FgSlAo89wgwsLuAjJtR");
+//define("TWITTER_CONSUMER_KEY","TaPR4ZpfTewzAhui0aqFQHb5E");
+define("TWITTER_CONSUMER_SECRETE","xXWPqIkHyPiU9uJl4426EmKLhRYNEMF940Ld3DoYzHhrxns4H5");
+define("TWITTER_CONSUMER_KEY","98v3ZFxFLnOg67M1DgYletIyI");
+
 define("TWITTER_CALLBACK","https://www.singhabeerfinder.com/");
 
 /**
