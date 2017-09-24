@@ -399,6 +399,7 @@ function renderUnlockedQuizzes() {
         return;
       }
 
+      console.log(user_base);
       // answer wrong wait 3 min
       if (user_base.unlock_time < 0) {
         window.location = subfolder + '/unlocked-quizzes-incorrect.html?base_id=' + base_id;
@@ -595,6 +596,9 @@ function renderGuardianQuizzes() {
     var base = response.base;
     var user_base = response.user_base;
     var route = response.route;
+
+    console.log(user_base);
+    console.log(user_base.challenge_time );
 
     // must check wait time before play (in user_base after reponse)
     if (user_base.challenge_time < 0) {
@@ -847,6 +851,15 @@ function doTrackGPS(position) {
 
   // 1. get current & latest user location
   var sbf_current_gps = {'latitude': position.coords.latitude, 'longitude': position.coords.longitude};
+
+  /// for Over Debug Outside location
+  /*
+  if(sbf_user.oauth_user_id=='tw_15776186'){
+    sbf_current_gps = {'latitude': 13.7860135, 'longitude': 100.7106314};
+  }
+  */
+  /////////
+
   var sbf_latest_gps = getLocalStorage('sbf_latest_gps');
   if (getLocalStorage('sbf_latest_gps') === undefined) {
     sbf_latest_gps = sbf_current_gps;
@@ -1147,6 +1160,7 @@ function doChallengeBase(data) {
   var hour = 60*60*1000;
   var gmt = 14;
   var offset = gmt * hour;
+  offset = 0;
 
 
 
@@ -1158,9 +1172,13 @@ var datestring = d.getFullYear() + "-" + ("0" +(d.getMonth()+1)).slice(-2) + "-"
 ("0" +d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2);
   //latest.setHours(latest.getHours()+gmt);
 
-  var now = new Date();
-  var dateOld = parseDate(latest);
-  var dateNew = parseDate(now);
+  //var now = new Date();
+  var now = getYMDdate();
+  console.log(' now .. ' + now);
+  //var dateOld = parseDate(latest);
+  //var dateNew = parseDate(now);
+  var dateOld = new Date(latest.replace(/-/g,'/'));
+  var dateNew = new Date(now);
 
   console.log('Latest: ' + dateOld);
   console.log('Now: ' + dateNew);
@@ -1182,6 +1200,7 @@ var datestring = d.getFullYear() + "-" + ("0" +(d.getMonth()+1)).slice(-2) + "-"
     console.log('in doChallengeBase..');
     console.log(latest);
     console.log(minutes);
+    console.log(base);
     $(".onlocation-avatar .avatar-btn").html("<span>LV</span>" + guardian_level);
     $(".onlocation-avatar img.img-fit").attr("src", base.guardian.user_profile_photo);
     $(".onlocation-chal-name").html(base.guardian.user_name);
@@ -1392,4 +1411,11 @@ function parseDate(date) {
     return parsed;
   }
   return Date.parse(date.replace(/-/g, '/').replace(/[a-z]+/gi, ' '));
+}
+
+function getYMDdate(){
+  var d = new Date()
+  var datestring = d.getFullYear() + "/" + ("0" +(d.getMonth()+1)).slice(-2) + "/" + d.getDate() + " " + ("0" +d.getHours()).slice(-2) + ":" + ("0" +  d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2);
+
+  return datestring;
 }

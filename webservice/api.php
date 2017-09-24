@@ -93,18 +93,22 @@ class SBF_API {
 
         // check wait time - unlock-wait, challeng-wait
         if ($data["user_base"] != NULL) {
-            $today_time = strtotime(date("Y-m-d H:i:s"));
+            //$today_time = strtotime(date("Y-m-d H:i:s"));
+            $timezone  = 7; // GMT +7
+            $today_time = gmdate("Y-m-d H:i:s", time() + 3600*($timezone/*+date("I")*/));
+
             $data["user_base"]["unlock_time"] = 0;
             $data["user_base"]["challenge_time"] = 0;
+            $data["user_base"]["today_time"] = $today_time;
 
             if ($data["user_base"]["unlock_wait_time"] !== NULL) {
                 $wait_time = strtotime($data["user_base"]["unlock_wait_time"]);
-                $data["user_base"]["unlock_time"] = round(($today_time - $wait_time) / 60, 1);
+                $data["user_base"]["unlock_time"] = round((strtotime($today_time) - $wait_time) / 60, 1);
             }
 
             if ($data["user_base"]["challenge_wait_time"] !== NULL) {
                 $wait_time = strtotime($data["user_base"]["challenge_wait_time"]);
-                $data["user_base"]["challenge_time"] = round(($today_time - $wait_time) / 60, 1);
+                $data["user_base"]["challenge_time"] = round((strtotime($today_time) - $wait_time) / 60, 1);
             }
         }
 
@@ -167,7 +171,10 @@ class SBF_API {
       $guardian_oauth_id = "";
       $guardian_time = "";
       $guardian_score = 0;
-      $now = date('Y-m-d H:i:s');
+      //$now = date('Y-m-d H:i:s');
+
+      $timezone  = 7; // GMT +7
+      $now = gmdate("Y-m-d H:i:s", time() + 3600*($timezone/*+date("I")*/));
       ///// sbfdm_route_base
 
       $sql = "select sbfdm_route_base.* from sbfdm_route_base ";
@@ -355,8 +362,13 @@ class SBF_API {
         if ($quiz['correct_answer'] == $answer) {
             $data["correct"] = 'true';
             $unlocked_status = 'true';
-            $time = new DateTime();
-            $unlocked_date = $time->format('Y-m-d H:i');
+
+
+            //$time = new DateTime();
+            //$unlocked_date = $time->format('Y-m-d H:i');
+
+            $timezone  = 7; // GMT +7
+            $unlocked_date = gmdate("Y-m-d H:i:s", time() + 3600*($timezone/*+date("I")*/));
 
             //// added by Over Sep 10,2017
             $user_level = $this->getUserLevel($oauth_user_id);
@@ -364,10 +376,15 @@ class SBF_API {
             $this->addScore(2 /*action: Unlocked*/, $user_level, $oauth_user_id, $route_id, $base_id);
 
         } else {
-            $time = new DateTime();
-            $minutes_to_add = 3;
-            $time->add(new DateInterval('PT' . $minutes_to_add . 'M'));
-            $unlock_wait_time = $time->format('Y-m-d H:i');
+            //$time = new DateTime();
+            //$minutes_to_add = 3;
+            //$time->add(new DateInterval('PT' . $minutes_to_add . 'M'));
+            //$unlock_wait_time = $time->format('Y-m-d H:i');
+
+            $timezone  = 7; // GMT +7
+            $mytime = gmdate("Y-m-d H:i:s", time() + 3600*($timezone/*+date("I")*/));
+            $minutes_add = '+3 minutes';
+            $unlock_wait_time = date('Y-m-d H:i:s', strtotime($minutes_add, strtotime($mytime)));
         }
 
         $field = array(
@@ -465,7 +482,7 @@ class SBF_API {
             $this->addScore(1 /*action: correct quiz*/, $user_level, $oauth_user_id , $route_id, $base_id);
 
             /// insert correct question , prevent random same old question
-            $sql = "insert into sbf_users_quiz_correct ( oauth_user_id, session, quiz_id) values ( '{$oauth_user_id}', '${session}', $quiz_id)";
+            $sql = "insert into sbf_users_quiz_correct ( oauth_user_id, session, quiz_id) values ( '{$oauth_user_id}', '{$session}', $quiz_id)";
             $this->database->query($sql);
 
 
@@ -477,13 +494,31 @@ class SBF_API {
             $sql = "delete from sbf_users_quiz_correct where oauth_user_id='($oauth_user_id)' ";
             $this->database->query($sql);
 
+            /*
             $time = new DateTime();
             $minutes_to_add = 3;
             $time->add(new DateInterval('PT' . $minutes_to_add . 'M'));
             $challenge_wait_time = $time->format('Y-m-d H:i');
+            */
+
+            $timezone  = 7; // GMT +7
+            $mytime = gmdate("Y-m-d H:i:s", time() + 3600*($timezone/*+date("I")*/));
+            $minutes_add = '+3 minutes';
+            $challenge_wait_time = date('Y-m-d H:i:s', strtotime($minutes_add, strtotime($mytime)));
+
+
             $sql = "UPDATE sbfdm_user_base SET challenge_wait_time='$challenge_wait_time' WHERE oauth_user_id='{$oauth_user_id}' AND base_id='{$base_id}'";
             $result = $this->database->query($sql);
 
+            /// count correct point
+            $sql = "select count(*) as cc from sbf_users_quiz_correct where session='{$session}' ";
+            $result = $this->database->query($sql);
+            $row = $result->fetch_assoc();
+            $cc = $row['cc'];
+
+
+            $sql = "UPDATE sbfdm_route_base SET latest_guardian_score = '$cc' , latest_guardian_date = '{$mytime}' where ID = {$base_id}";
+            $this->database->query($sql);
 
         }
         return $data;
@@ -525,12 +560,15 @@ class SBF_API {
 
         // user_base
         if ($challenge == 'win') {
+            $timezone  = 7; // GMT +7
+            $now = gmdate("Y-m-d H:i:s", time() + 3600*($timezone/*+date("I")*/));
+
             $sql = "UPDATE sbfdm_user_base SET guardian_status='false' WHERE base_id='$base_id}'";
             $this->database->query($sql);
             $field = array(
                 'guardian_status' => 'true',
                 'guardian_score' => $score,
-                'guardian_start_date' => date('Y-m-d H:i:s'),
+                'guardian_start_date' => $now /*(date('Y-m-d H:i:s')*/,
             );
             $set = "";
             $index = 0;
@@ -541,10 +579,15 @@ class SBF_API {
                     $set.=",";
                 }
             }
-            $time = new DateTime();
-            $minutes_to_add = 3;
-            $time->add(new DateInterval('PT' . $minutes_to_add . 'M'));
-            $challenge_wait_time = $time->format('Y-m-d H:i');
+            //$time = new DateTime();
+            //$minutes_to_add = 3;
+            //$time->add(new DateInterval('PT' . $minutes_to_add . 'M'));
+            //$challenge_wait_time = $time->format('Y-m-d H:i');
+            $timezone  = 7; // GMT +7
+            $mytime = gmdate("Y-m-d H:i:s", time() + 3600*($timezone/*+date("I")*/));
+            $minutes_add = '+3 minutes';
+            $challenge_wait_time = date('Y-m-d H:i:s', strtotime($minutes_add, strtotime($mytime)));
+
             $sql = "UPDATE sbfdm_user_base SET {$set},challenge_wait_time='{$challenge_wait_time}' WHERE base_id='$base_id}' AND oauth_user_id='{$oauth_user_id}'";
             $this->database->query($sql);
 
@@ -552,10 +595,15 @@ class SBF_API {
             $user_level = $this->getUserLevel($oauth_user_id);
             $this->addScore(3 /*action: Be Guardian*/, $user_level, $oauth_user_id, $route_id, $base_id);
         } else {
-            $time = new DateTime();
-            $minutes_to_add = 3;
-            $time->add(new DateInterval('PT' . $minutes_to_add . 'M'));
-            $challenge_wait_time = $time->format('Y-m-d H:i');
+            //$time = new DateTime();
+            //$minutes_to_add = 3;
+            //$time->add(new DateInterval('PT' . $minutes_to_add . 'M'));
+            //$challenge_wait_time = $time->format('Y-m-d H:i');
+            $timezone  = 7; // GMT +7
+            $mytime = gmdate("Y-m-d H:i:s", time() + 3600*($timezone/*+date("I")*/));
+            $minutes_add = '+3 minutes';
+            $challenge_wait_time = date('Y-m-d H:i:s', strtotime($minutes_add, strtotime($mytime)));
+
             $sql = "UPDATE sbfdm_user_base SET challenge_wait_time='{$challenge_wait_time}' WHERE base_id='$base_id}' AND oauth_user_id='{$oauth_user_id}'";
             $this->database->query($sql);
         }

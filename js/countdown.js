@@ -33,7 +33,7 @@ jQuery(document).ready(function() {
 		$('.button a').text('Challenge Again');
 	}
 
-	var api_countdown = "https://singhabeerfinder.com/webservice/countdown.php";
+	var api_countdown = "https://www.singhabeerfinder.com/webservice/countdown.php";
 	var myInterval;
 
 	var base_id = param['base_id'];
@@ -56,6 +56,14 @@ jQuery(document).ready(function() {
 	var startTime;
 	var sbf_user = getLocalStorage('sbf_user');
 
+	function parseDate(date) {
+	  const parsed = Date.parse(date);
+	  if (!isNaN(parsed)) {
+	    return parsed;
+	  }
+	  return Date.parse(date.replace(/-/g, '/').replace(/[a-z]+/gi, ' '));
+	}
+
 
 	Date.prototype.addMinutes = function(minutes) {
       this.setMinutes(this.getMinutes() + minutes);
@@ -68,13 +76,49 @@ jQuery(document).ready(function() {
 	});
 
 	function Countdown(){
+		var hour = 60*60*1000;
+	  var gmt = 14;
+	  var offset = gmt * hour;
+
+		offset =0;
+
+		var MaxMinute = 3;
 		var minute = 60000;
-		var Now = new Date();
-		var Begin = new Date(startTime);
-		Begin.addMinutes(1);
+		//var Now = new Date();
+		//var Begin = new Date(startTime);
+		//Begin.addMinutes(MaxMinute);	//// 3 minutes in actual
+
+		var now = getYMDdate();
+	  console.log(' now .. ' + now);
+	  //var dateOld = parseDate(latest);
+	  //var dateNew = parseDate(now);
+	  var dateStart = new Date(startTime.replace(/-/g,'/'));
+	  var dateStop = new Date(now);
+
+
+
+		//var min = Diff/1000/60;
+		console.log(dateStart + ' // Start');
+
+		var ThreeMinutest = dateStart.setMinutes(dateStart.getMinutes() + MaxMinute);
+
+		console.log(dateStart + ' // Start + 3 minutes');
+
+
+		var Diff = Math.abs(ThreeMinutest - dateStop);
+		//Diff -= offset;
+		//Diff += (MaxMinute * minute);
+		var min = Diff/1000/60;
+
+		console.log(dateStop + ' ///////// Now');
+		console.log(Diff);
+		console.log(min);
+
+		/*
 		var ThreeMinutes = Begin;
 		var Diff = ThreeMinutes-Now;
 		var min = Diff/1000/60;
+		*/
 		var r = min % 1;
 		var sec = Math.floor(r * 60);
 		var s = sec;
@@ -83,7 +127,9 @@ jQuery(document).ready(function() {
 		}
 		min = Math.floor(min);
 
-		if(min<=0 && s <=0){
+
+
+		if((min<=0 && s <=0)||min>3){
 			/// Finish countdown
 			$('#countdown').text('00:00');
 			clearInterval(myInterval);
@@ -133,6 +179,13 @@ jQuery(document).ready(function() {
 	 */
 	function removeLocalStorage(key) {
 	  window.localStorage.removeItem(key);
+	}
+
+	function getYMDdate(){
+	  var d = new Date()
+	  var datestring = d.getFullYear() + "/" + ("0" +(d.getMonth()+1)).slice(-2) + "/" + d.getDate() + " " + ("0" +d.getHours()).slice(-2) + ":" + ("0" +  d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2);
+
+	  return datestring;
 	}
 
 

@@ -31,7 +31,10 @@ class COUNTDOWN_API {
       $ret = $row['mark_time'];
     }else{
       /// create the new one
-      $now = date('Y-m-d H:i:s');
+      //$now = date('Y-m-d H:i:s');
+      $timezone  = 7; // GMT +7
+      $now = gmdate("Y-m-d H:i:s", time() + 3600*($timezone/*+date("I")*/));
+
 
       $sql = "insert into sbfdm_user_incorrect (oauth_user_id, mark_time) values ( '{$oauth_user_id}', '{$now}')";
       $this->database->query($sql);
