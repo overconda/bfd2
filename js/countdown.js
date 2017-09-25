@@ -3,6 +3,10 @@ jQuery(document).ready(function() {
 
 	"use strict";
 
+	////////// Set Button
+	$('.button-sticky .button a').text('Close');
+	$('.button-sticky .button a').attr('href', 'home.html');
+
 	function parseQuery()
 	{
 	  var currentURL = document.URL;
@@ -139,6 +143,15 @@ jQuery(document).ready(function() {
 		  $.post(api_countdown, params, function (){});
 
 			$('.button-sticky .button').removeClass('button-disable');
+
+			var pathname = window.location.pathname;
+			var n = pathname.indexOf('guardian');
+			if(n > 0){
+				$('.button-sticky .button a').text('Challenge Now');
+				$('.button-sticky .button a').attr('href', 'guardian-quizzes.html?base_id=' + base_id);
+			}
+
+
 		}else{
 			$('#countdown').text(min+':'+sec);
 		}
@@ -187,6 +200,9 @@ jQuery(document).ready(function() {
 
 	  return datestring;
 	}
+
+
+
 
 
 });

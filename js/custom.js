@@ -673,7 +673,8 @@ jQuery(document).ready(function() {
 	/* =============================================
 	Route animation setting
 	================================================ */
-	function routeAnimate() {
+	window.routeAnimate = function() {
+	//function routeAnimate() {
 
 		var routeSingle = $('.route-svg-single .route-svg-content'),
 			routeList = $('.route-svg-list .route-svg-content');
@@ -799,13 +800,12 @@ jQuery(document).ready(function() {
 	//window.onLocation = function() {
 	window.onLocation = function (mode, cb, _data) {
 
-
 		// kergrit add check existing onlocation notify
 		if ($(".onlocation-section").length != 0)
 			return;
 
 		// kergrit add url for modal load
-		var url = 'on-location.html';
+		var url = 'on-location-challenge.html';
 		if (mode == true) {
 			url = 'on-location-challenge.html';
 		} else if (mode == 'multiple') {
@@ -960,7 +960,7 @@ jQuery(document).ready(function() {
 	/*
 	setTimeout(function(){
 		onLocation();
-	}, timeonLoad + 5000);
+	}, timeonLoad + 1000);
 	*/
 
 	// Using for on location challenge stand alone
@@ -970,6 +970,7 @@ jQuery(document).ready(function() {
 			pinAnimate();
 		}, timeonLoad + 500);
 	}
+
 
 	/* =============================================
 	Fixed svg dimensions on IE

@@ -510,15 +510,7 @@ class SBF_API {
             $sql = "UPDATE sbfdm_user_base SET challenge_wait_time='$challenge_wait_time' WHERE oauth_user_id='{$oauth_user_id}' AND base_id='{$base_id}'";
             $result = $this->database->query($sql);
 
-            /// count correct point
-            $sql = "select count(*) as cc from sbf_users_quiz_correct where session='{$session}' ";
-            $result = $this->database->query($sql);
-            $row = $result->fetch_assoc();
-            $cc = $row['cc'];
 
-
-            $sql = "UPDATE sbfdm_route_base SET latest_guardian_score = '$cc' , latest_guardian_date = '{$mytime}' where ID = {$base_id}";
-            $this->database->query($sql);
 
         }
         return $data;
@@ -654,6 +646,17 @@ class SBF_API {
       return $level;
 
     }
+    public function getUserUnlockedBaseName($oauth_user_id){
+      $data=array();
+      $sql = "select sbfdm_route_base.base_title,sbfdm_user_base.base_id from sbfdm_route_base inner join sbfdm_user_base on sbfdm_route_base.ID = sbfdm_user_base.base_id where sbfdm_user_base.oauth_user_id like '{$oauth_user_id}' and sbfdm_user_base.unlocked_status= 'true' ";
+      $result = $this->database->query($sql);
+      if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+          $data[] = $row;
+        }
+      }
+      return $data;
+    }
 
     public function getUserScoreLevel($oauth_user_id){
       $data = array('score' => NULL, 'level'=> NULL, 'unlocked_num'=>NULL);
@@ -780,6 +783,10 @@ if ($_POST['method'] == "get_route_base_user") {
     echo(json_encode($response));
 }else if ($_POST['method'] == "set_fav_route") {
     $response = $sbf_api->setFavRoute($_POST['route_id'],$_POST['oauth_user_id']);
+    header('Content-Type: application/json');
+    echo(json_encode($response));
+}else if ($_POST['method'] == "get_user_unlocked_base_name") {
+    $response = $sbf_api->getUserUnlockedBaseName($_POST['oauth_user_id']);
     header('Content-Type: application/json');
     echo(json_encode($response));
 }

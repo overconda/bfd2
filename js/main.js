@@ -853,11 +853,13 @@ function doTrackGPS(position) {
   var sbf_current_gps = {'latitude': position.coords.latitude, 'longitude': position.coords.longitude};
 
   /// for Over Debug Outside location
-  /*
+
   if(sbf_user.oauth_user_id=='tw_15776186'){
-    sbf_current_gps = {'latitude': 13.7860135, 'longitude': 100.7106314};
+    //sbf_current_gps = {'latitude': 13.7860135, 'longitude': 100.7106314}; //Home
+    //sbf_current_gps = {'latitude': 13.8001194, 'longitude': 100.606461};  //The Hey Penny / Route Nakniwat
+    sbf_current_gps = {'latitude': 13.7978112, 'longitude': 100.6067165};  //Kiew Kai Ka / Route Nakniwat
   }
-  */
+
   /////////
 
   var sbf_latest_gps = getLocalStorage('sbf_latest_gps');

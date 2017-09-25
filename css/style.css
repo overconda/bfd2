@@ -2904,6 +2904,12 @@ a:active {
 	stroke: #ffd503 !important;
 }
 
+@media (max-width: 1199px) {
+	.route-detail-pts-wrap {
+		background-image: none !important;	
+	}
+}
+
 
 /********************************************
 6.0 Unlock & Guardian
