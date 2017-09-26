@@ -721,6 +721,12 @@ jQuery(document).ready(function() {
 			routeSingle.addClass("route-finished");
 		}, 900);
 
+		setTimeout(function(){
+			$('.route-details-container .base-info-1').addClass("base-active baseClick");
+			$('.route-details-container .base-info-1 g').html("<circle class='circle-active' fill='#ffd503' stroke='#ffd503' stroke-width='8' cx='0' cy='0' r='11'/><circle fill='#fff' cx='0' cy='0' r='7'/>");
+			$('.route-details-container .base-info-1 g').removeClass("group-unactive").addClass("group-active");
+		}, timeonLoad + 200);
+
 		$(window).on("scroll", function(){
 			var ua = window.navigator.userAgent,
 				msie = ua.indexOf("MSIE "),

@@ -61,74 +61,13 @@ $(document).ready(function () {
   });
 
 
-  $('.profile-section.profile-routes-completed .routes-list:eq(0)').hide(); // Complete Routes
-  $('.profile-section.profile-routes-completed .routes-list:eq(1)').hide(); // On Going Route
-
   var params = {'method': 'check_user_route_status', 'oauth_user_id': sbf_user.oauth_user_id};
   $.post(api_rt, params, function (response) {
     var routeComplete = response.routeComplete;
     var routeToGo = response.routeToGo;
 
-    /*
     console.log('check route=====');
     console.log(routeComplete);
     console.log(routeToGo);
-    console.log(routeToGo.length);
-    */
-
-    var numRouteComplete = Object.keys(routeComplete).length;
-    var numRouteToGo = Object.keys(routeToGo).length;
-
-    if(numRouteComplete > 0){
-      $('.profile-section.profile-routes-completed .routes-list:eq(0) .profile-subtitle').html('Completed ' + numRouteComplete + ' routes');
-      $('.profile-section.profile-routes-completed .routes-list:eq(0) .routes-list-row').html('');//clear
-      //for(var i = 0; i < numRouteToGo; i++){
-      $.each(routeComplete, function(route_id, route){
-        $('.profile-section.profile-routes-completed .routes-list:eq(0) .routes-list-row').append('\
-          <div class="routes-list-col">\
-              <div class="route-box">\
-                  <a class="modal-open" href="#">\
-                      <figure>\
-                          <img src="images/svg/route-profile.svg" alt="route"/>\
-                      </figure>\
-                      <h4>' + route.route_title + '</h4>\
-                      <div class="route-date">\
-                          ' + route.unlocked_date + '\
-                      </div>\
-                  </a>\
-              </div>\
-          </div>');
-      });
-
-
-      $('.profile-section.profile-routes-completed .routes-list:eq(0)').show();
-    }
-
-    if(numRouteToGo > 0){
-
-      $('.profile-section.profile-routes-completed .routes-list:eq(1) .profile-subtitle').html('On going ' + numRouteToGo + ' routes');
-      $('.profile-section.profile-routes-completed .routes-list:eq(1) .routes-list-row').html('');//clear
-      //for(var i = 0; i < numRouteToGo; i++){
-      $.each(routeToGo, function(route_id, route){
-        $('.profile-section.profile-routes-completed .routes-list:eq(1) .routes-list-row').append('\
-          <div class="routes-list-col">\
-              <div class="route-box">\
-                  <a class="modal-open" href="#">\
-                      <figure>\
-                          <img src="images/svg/route-profile.svg" alt="route"/>\
-                      </figure>\
-                      <h4>' + route.route_title + '</h4>\
-                      <div class="route-date">\
-                          ' + route.unlocked_date + '\
-                      </div>\
-                  </a>\
-              </div>\
-          </div>');
-      });
-
-
-      $('.profile-section.profile-routes-completed .routes-list:eq(1)').show();
-
-    }
   });
 });

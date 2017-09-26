@@ -47,6 +47,9 @@ for($i=0; $i<$len; $i++){
   $transform = $_POST['tf'][$i];
   $ordering = $_POST['order'][$i];
 
+  $mark1 ="";
+  $mark2 = "";
+
   $sql = "update sbfdm_route_base set base_no=$ordering, coordinate_y='$y', coordinate_transform='$transform' where ID=$sub_base_id ";
 
   //echo "<br><br>$sql";
@@ -54,10 +57,17 @@ for($i=0; $i<$len; $i++){
   $stmt = $dbh->prepare($sql);
   $stmt->execute();
 
+  if($ordering=='1' || $ordering==1){
+    $mark1 = "base-active";
+    $mark2 = "group-active";
+  }else{
+    $mark2 = "group-unactive";
+  }
+
 $eachBaseHTML = <<<EOS
-<g class="base-info-{$ordering} base-marker" transform="{$transform}">
+<g class="base-info-{$ordering} base-marker {$mark1}" transform="{$transform}">
   <text x="-10" y="{$y}" font-size="19" fill="#fff">{$ordering}</text>
-  <g class="group-unactive">
+  <g class="{$mark2}">
     <circle fill="#ffd503" stroke="#fff" stroke-width="5" cx="0" cy="0" r="6"/>
   </g>
 </g>

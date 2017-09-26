@@ -45,7 +45,7 @@ class ROUTE_API {
     public function getRouteBasesUserUnlocked($route_id, $oauth_user_id){
       $bases = array();
 
-      $sql = "select sbfdm_route_base.ID as base_id, sbfdm_route_base.route_id, sbfdm_route_base.base_no, base_title from sbfdm_route_base where route_id={$route_id}";
+      $sql = "select sbfdm_route_base.ID as base_id, sbfdm_route_base.route_id, sbfdm_route_base.base_no, base_title , base_excerpt from sbfdm_route_base where route_id={$route_id}";
       $result = $this->database->query($sql);
       if($result->num_rows){
         while($row = $result->fetch_assoc()){
@@ -53,6 +53,7 @@ class ROUTE_API {
           $bases[$row['base_id']]['base_id'] = $row['base_id'];
           $bases[$row['base_id']]['base_no'] = $row['base_no'];
           $bases[$row['base_id']]['base_title'] = $row['base_title'];
+          $bases[$row['base_id']]['base_excerpt'] = $row['base_excerpt'];
         }
       }
 
@@ -89,6 +90,90 @@ class ROUTE_API {
 			return $randomString;
   	}
 
+    ///// user in PROFILE page ; 2017-09-26
+    public function findUserRoutes($oauth_user_id){
+      $data = array();
+      $sql = "select distinct sbfdm_route.ID as route_id, sbfdm_route.route_title, sbfdm_user_base.unlocked_date ";
+      $sql .= " from sbfdm_route ";
+      $sql .= " inner join sbfdm_user_base on sbfdm_route.ID = sbfdm_user_base.route_id";
+      $sql .= " where sbfdm_user_base.unlocked_status='true' and sbfdm_user_base.oauth_user_id = '{$oauth_user_id}' ";
+
+      $result = $this->database->query($sql);
+      while($row = $result->fetch_assoc()){
+        $route_id = $row['route_id'];
+        $unlocked_date = $row['unlocked_date'];
+        $date = date_create($unlocked_date);
+        $dateformated = date_format($date, 'M d,Y');
+
+        $data[$route_id]['route_id'] = $row['route_id'];
+        $data[$route_id]['route_title'] = $row['route_title'];
+        $data[$route_id]['unlocked_date'] = $dateformated;
+      }
+      return $data;
+    }
+
+    public function findRoutesBasesNum($data){
+      if($data){
+        foreach($data as $route){
+          $route_id = $route['route_id'];
+          $sql = "select count(*) as cc from sbfdm_route_base where route_id = $route_id";
+          $result = $this->database->query($sql);
+          $row = $result->fetch_assoc();
+          $data[$route_id]['bases_num'] = $row['cc'];
+        }
+      }
+
+      return $data;
+    }
+
+    public function findUsersRouteBasesNum($data, $oauth_user_id){
+      if($data){
+        foreach($data as $route){
+          $route_id = $route['route_id'];
+          $sql = "select count(*) as cc from sbfdm_user_base where route_id = {$route_id} and unlocked_status='true' and oauth_user_id='{$oauth_user_id}' ";
+          $result = $this->database->query($sql);
+          $row = $result->fetch_assoc();
+          $data[$route_id]['user_bases_num'] = $row['cc'];
+        }
+      }
+      return $data;
+    }
+
+
+    public function checkUserRouteStatus($oauth_user_id){
+      $routeComplete = array();
+      $routeToGo = array(); // participate but not complete
+      $data = array();
+
+      $data = $this->findUserRoutes($oauth_user_id);
+      $dataRoutes = $this->findRoutesBasesNum($data);
+      $dataUser = $this->findUsersRouteBasesNum($data, $oauth_user_id);
+
+      $retArr = array();
+
+      foreach($data as $route){
+        $route_id = $route['route_id'];
+        $route_title = $route['route_title'];
+        $unlocked_date = $route['unlocked_date'];
+        if($dataRoutes[$route_id]['bases_num'] == $dataUser[$route_id]['user_bases_num']){
+          $routeComplete[$route_id]['route_id'] = $route_id;
+          $routeComplete[$route_id]['route_title'] = $route_title;
+          $routeComplete[$route_id]['unlocked_date'] = $unlocked_date;
+        }else{
+          $routeToGo[$route_id]['route_id'] = $route_id;
+          $routeToGo[$route_id]['route_title'] = $route_title;
+          $routeToGo[$route_id]['unlocked_date'] = $unlocked_date;
+        }
+
+      }
+
+      $retArr['routeComplete'] = $routeComplete;
+      $retArr['routeToGo'] = $routeToGo;
+
+      return $retArr;
+
+    }
+
 }/// end class
 
 /**
@@ -108,11 +193,11 @@ if ($_POST['method'] == "get_route_svg") {
     $response = $route_api->getRouteBasesUserUnlocked($_POST['route_id'], $_POST['oauth_user_id']);
     header('Content-Type: application/json');
     echo(json_encode($response));
-}/*else if ($_POST['method'] == "get_base_user") {
-    $response = $route_api->getBaseUser($_POST['base_id'], $_POST['oauth_user_id']);
+}else if ($_POST['method'] == "check_user_route_status") {
+    $response = $route_api->checkUserRouteStatus( $_POST['oauth_user_id']);
     header('Content-Type: application/json');
     echo(json_encode($response));
-} else if ($_POST['method'] == "get_nbase_user") {
+} /*else if ($_POST['method'] == "get_nbase_user") {
     $response = $route_api->getNBaseUser($_POST['base_ids'], $_POST['oauth_user_id']);
     header('Content-Type: application/json');
     echo(json_encode($response));

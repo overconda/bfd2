@@ -313,6 +313,7 @@ function renderUnlocked() {
 
       // guradian / no guardian info
       if (base.guardian !== null) {
+        console.log(base);
         console.log('Guardian: ' );
         console.log(base.guardian);
         $(".guardian-avatar img").attr("src", base.guardian.user_profile_photo);
@@ -401,10 +402,12 @@ function renderUnlockedQuizzes() {
 
       console.log(user_base);
       // answer wrong wait 3 min
+/*
       if (user_base.unlock_time < 0) {
         window.location = subfolder + '/unlocked-quizzes-incorrect.html?base_id=' + base_id;
         return;
       }
+      */
     }
 
     if (base !== null) {
@@ -510,7 +513,7 @@ function renderUnlockedQuizzesIncorrect() {
       $(".base-header h1").html(base.base_title);
       $(".base-header .meta-item.meta-route span").html(route.route_title);
       $(".unlock-caption span").html("'" + sbf_user.user_name + "'");
-      $(".notify-quiz-desc span").html($(".notify-quiz-desc span").html() + " : " + Math.abs(user_base.unlock_time) + " Min");
+      //$(".notify-quiz-desc span").html($(".notify-quiz-desc span").html() + " : " + Math.abs(user_base.unlock_time) + " Min");
     }
     $(".back-prev a").attr("href", "unlocked.html?base_id=" + base_id);
     $(".button-sticky a").attr("href", "unlocked.html?base_id=" + base_id)
@@ -725,7 +728,7 @@ function renderGuardianQuizzesIncorrect() {
       $(".base-header h1").html(base.base_title);
       $(".base-header .meta-item.meta-route span").html(route.route_title);
       $(".unlock-caption span").html("'" + sbf_user.user_name + "'");
-      $(".notify-quiz-desc span").html($(".notify-quiz-desc span").html() + " : " + Math.abs(user_base.challenge_time) + " Min");
+      //$(".notify-quiz-desc span").html($(".notify-quiz-desc span").html() + " : " + Math.abs(user_base.challenge_time) + " Min");
     }
     $(".back-prev a").attr("href", "unlocked.html?base_id=" + base_id);
     $(".button-sticky a").attr("href", "unlocked.html?base_id=" + base_id);
@@ -775,7 +778,8 @@ function renderBeGuardian() {
       $(".guardian-name").html('<span>The guardian is</span>' + sbf_user.user_name);
 
       $(".num-transition span:eq(1)").remove();
-      $(".num-transition span:eq(0)").attr("data-number", user_base.guardian_score).html(user_base.guardian_score);
+      //$(".num-transition span:eq(0)").attr("data-number", user_base.guardian_score).html(user_base.guardian_score);
+      $(".num-transition span:eq(0)").attr("data-number", route.latest_guardian_score).html(route.latest_guardian_score);
     }
 
     $(".back-prev a").attr("href", "unlocked.html?base_id=" + base_id);
@@ -857,7 +861,7 @@ function doTrackGPS(position) {
   if(sbf_user.oauth_user_id=='tw_15776186'){
     //sbf_current_gps = {'latitude': 13.7860135, 'longitude': 100.7106314}; //Home
     //sbf_current_gps = {'latitude': 13.8001194, 'longitude': 100.606461};  //The Hey Penny / Route Nakniwat
-    sbf_current_gps = {'latitude': 13.7978112, 'longitude': 100.6067165};  //Kiew Kai Ka / Route Nakniwat
+    //sbf_current_gps = {'latitude': 13.7978112, 'longitude': 100.6067165};  //Kiew Kai Ka / Route Nakniwat
   }
 
   /////////
@@ -971,6 +975,7 @@ function doOnlocation1Base() {
       var route = response.route;
       var user_base = response.user_base;
 
+      console.log(response);
       if (user_base === null) {
         onLocation(false, 'doUnlockBase', response);
       } else {

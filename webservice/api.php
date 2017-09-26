@@ -73,7 +73,8 @@ class SBF_API {
     public function getBaseUser($base_id, $oauth_user_id) {
         $data = array("base" => NULL, "user_base" => NULL);
 
-        $this->checkGuardianMoreThanHour($base_id);
+        //remark for check
+        //$this->checkGuardianMoreThanHour($base_id);
 
         // get base info
         $result = $this->database->query("SELECT * FROM sbfdm_route_base WHERE ID={$base_id}");
@@ -195,11 +196,13 @@ class SBF_API {
           if($excessTime){
 
             //// update sbfdm_route_base
-            $oneHour = date('Y-m-d H:i:s', strtotime('+1 hour', strtotime($oldtime)));
+            $oneHour = date('Y-m-d H:i:s', strtotime('+1 hour', strtotime($guardian_time)));
+
 
             $sql = "update sbfdm_route_base set latest_guardian_date='$oneHour', latest_guardian_score=0 ";
             $sql .= " where ID=$base_id";
             $this->database->query($sql);
+            $this->database->query('insert into debug (txt) values("203: ' . addslashes($sql) .  '") ');
 
             /// update sdfdm_user_base
             $sql = "update sbfdm_user_base set guardian_status = false , guardian_end_date = '$oneHour' where oauth_user_id='$oauth_user_id' and base_id=$base_id ";
@@ -516,6 +519,7 @@ class SBF_API {
         return $data;
     }
 
+
     /**
      * Check base challenge win or lose
      * @param type $base_id
@@ -547,6 +551,8 @@ class SBF_API {
                 }
                 $sql = "UPDATE sbfdm_route_base SET {$set} WHERE ID='$base_id}'";
                 $this->database->query($sql);
+
+                $this->database->query('insert into debug (txt) values("551: ' . addslashes($sql) .  '") ');
             }
         }
 
@@ -555,8 +561,29 @@ class SBF_API {
             $timezone  = 7; // GMT +7
             $now = gmdate("Y-m-d H:i:s", time() + 3600*($timezone/*+date("I")*/));
 
+            //// Select latest guardian to mark END
+            $id_ = 0;
+            $sql = "SELECT * FROM sbfdm_user_base WHERE base_id = {$base_id} AND guardian_status = 'true' ORDER BY guardian_start_date DESC LIMIT 1";
+            $result = $this->database->query($sql);
+            if ($result->num_rows > 0) {
+              $row = $result->fetch_assoc();
+              $ged = trim($row['guardian_end_date'] . ' ');
+              if($ged != ""){ /// update onlye not have end date , end date was set by 1 hour sometime
+                $id_ = $row['ID'];
+              }
+            }
+            if($id_ > 0){
+              //// Save guardian end date for calculate guardian minutes
+              $sql = "update sbfdm_user_base set guardian_end_date = '$now' where ID = {$id_} ";
+              $this->database->query($sql);
+            }
+
+            /// clear all guardian of this base to false
             $sql = "UPDATE sbfdm_user_base SET guardian_status='false' WHERE base_id='$base_id}'";
             $this->database->query($sql);
+
+
+
             $field = array(
                 'guardian_status' => 'true',
                 'guardian_score' => $score,
@@ -580,12 +607,20 @@ class SBF_API {
             $minutes_add = '+3 minutes';
             $challenge_wait_time = date('Y-m-d H:i:s', strtotime($minutes_add, strtotime($mytime)));
 
+            /*** If WIN do not waite
             $sql = "UPDATE sbfdm_user_base SET {$set},challenge_wait_time='{$challenge_wait_time}' WHERE base_id='$base_id}' AND oauth_user_id='{$oauth_user_id}'";
             $this->database->query($sql);
+            */
+
+            //// Update new score to Route_Base
+            $sql = "update sbfdm_route_base set latest_guardian_score = $score where ID=$base_id ";
+            //$this->database->query('insert into debug (txt) values( "'  . $sql . '")');
+            $this->database->query($sql);
+            $this->database->query('insert into debug (txt) values("615: ' . addslashes($sql) .  '") ');
 
             //// added by Over Sep 10,2017
             $user_level = $this->getUserLevel($oauth_user_id);
-            $this->addScore(3 /*action: Be Guardian*/, $user_level, $oauth_user_id, $route_id, $base_id);
+            $this->addScore(100 /*action: Be Guardian*/, $user_level, $oauth_user_id, $route_id, $base_id);
         } else {
             //$time = new DateTime();
             //$minutes_to_add = 3;
@@ -658,6 +693,7 @@ class SBF_API {
       return $data;
     }
 
+
     public function getUserScoreLevel($oauth_user_id){
       $data = array('score' => NULL, 'level'=> NULL, 'unlocked_num'=>NULL);
       $score=0;
@@ -699,7 +735,7 @@ class SBF_API {
 
 
 
-      $this->database->query("insert into debug (txt) values('$sql')");
+      $this->database->query("insert into debug (txt) values('736: " . addslashes($sql) . "')");
 
 
       $result = $this->database->query($sql);

@@ -76,6 +76,8 @@ jQuery(document).ready(function() {
 
 	var params = {'method': 'get_start_countdown_time', 'oauth_user_id': sbf_user.oauth_user_id};
   $.post(api_countdown, params, function (response) {
+		console.log('getStartCountdownTime');
+		console.log(response);
 		startTime = response.time;
 	});
 
@@ -93,7 +95,7 @@ jQuery(document).ready(function() {
 		//Begin.addMinutes(MaxMinute);	//// 3 minutes in actual
 
 		var now = getYMDdate();
-	  console.log(' now .. ' + now);
+	  //console.log(' now .. ' + now);
 	  //var dateOld = parseDate(latest);
 	  //var dateNew = parseDate(now);
 	  var dateStart = new Date(startTime.replace(/-/g,'/'));
@@ -102,11 +104,11 @@ jQuery(document).ready(function() {
 
 
 		//var min = Diff/1000/60;
-		console.log(dateStart + ' // Start');
+		//console.log(dateStart + ' // Start');
 
 		var ThreeMinutest = dateStart.setMinutes(dateStart.getMinutes() + MaxMinute);
 
-		console.log(dateStart + ' // Start + 3 minutes');
+		//console.log(dateStart + ' // Start + 3 minutes');
 
 
 		var Diff = Math.abs(ThreeMinutest - dateStop);
@@ -114,9 +116,9 @@ jQuery(document).ready(function() {
 		//Diff += (MaxMinute * minute);
 		var min = Diff/1000/60;
 
-		console.log(dateStop + ' ///////// Now');
-		console.log(Diff);
-		console.log(min);
+		//console.log(dateStop + ' ///////// Now');
+		//console.log(Diff);
+		//console.log(min);
 
 		/*
 		var ThreeMinutes = Begin;
@@ -149,6 +151,9 @@ jQuery(document).ready(function() {
 			if(n > 0){
 				$('.button-sticky .button a').text('Challenge Now');
 				$('.button-sticky .button a').attr('href', 'guardian-quizzes.html?base_id=' + base_id);
+			}else{
+				$('.button.button-large.button-fullwidth a').text('Unlock Now');
+				$('.button.button-large.button-fullwidth a').attr('href', 'unlocked-quizzes.html?base_id=' + base_id);
 			}
 
 
