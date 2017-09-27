@@ -3,13 +3,29 @@ var api_ws = "https://www.singhabeerfinder.com/webservice/api.php";
 var api_rt = "https://www.singhabeerfinder.com/webservice/route-api.php";
 //var api_ws = "webservice/api.php";
 
+function separateNumber(number){
+		//var output = [],
+    var sNumber = number.toString();
+    var s = '';
+    console.log(sNumber);
+
+    for (var i = 0, len = sNumber.length; i < len; i += 1) {
+       var rand = Math.floor((Math.random() * 8) + 1);
+        s += '<span data-number="' + sNumber.charAt(i) + '" class="numAnimate numSlideIn delay' + rand + '">' + sNumber.charAt(i) + '</span>';
+    }
+    console.log(s);
+    return(s);
+}
+
 $(document).ready(function () {
   var sbf_user = getLocalStorage('sbf_user');
+  var score=0;
   var params = {'method': 'get_user_score_level', 'oauth_user_id': sbf_user.oauth_user_id};
   $.post(api_ws, params, function (response) {
 
     var user = response;
-    console.log(user);
+    score = user.score;
+    //console.log(user);
 
     $('.profile-edit-btn').css('display','none');
 
@@ -58,6 +74,27 @@ $(document).ready(function () {
 
     //animateMe($('.profile-pts .num-transition'));
     //numberAnimate();
+
+    //// Animate Score
+    var sScore = separateNumber(score);
+    $('.your-pts-wrapper .num-transition').html(sScore);
+
+    $('ul.points-act').empty();
+    var params = {'method': 'get_latest_ten_score_history', 'oauth_user_id': sbf_user.oauth_user_id};
+    $.post(api_ws, params, function (response) {
+      $.each(response, function(num, history){
+        $('ul.points-act').append(
+          '<li>\
+              <div class="point-act-item">\
+                  <div class="point-act-num">+' + history.score+ '</div>\
+                  <div class="point-act-desc">\
+                      <p>+' + history.score + ' ' + history.text + '<br>' + history.date + '</p>\
+                  </div>\
+              </div>\
+          </li>'
+        );
+      });
+    });
   });
 
 
@@ -131,4 +168,14 @@ $(document).ready(function () {
 
     }
   });
+
+  ///// Hide for Guardian Minutes
+  $('.profile-section.profile-guardian-mins .profile-subtitle:eq(0)').hide();
+  $('.guardian-mins-wrapper .mins-stat').hide();
+
+  /// hide buton
+  $('.your-pts-wrapper .button').hide();
+
+
+
 });

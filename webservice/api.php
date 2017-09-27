@@ -693,6 +693,27 @@ class SBF_API {
       return $data;
     }
 
+    public function getLatestTenScoreHistory($oauth_user_id){
+      $data=array();
+      $sql = "SELECT sbf_users_score.score,sbf_users_score.cdate, sbf_action.action_name_en FROM sbf_users_score inner JOIN sbf_action on sbf_users_score.action_id = sbf_action.action_id WHERE oauth_user_id = '{$oauth_user_id}' order by cdate desc limit 10 ";
+
+      $result = $this->database->query($sql);
+      if ($result->num_rows > 0) {
+        $i=0;
+        while ($row = $result->fetch_assoc()) {
+          $date = date_create($row['cdate']);
+          $dateformated = date_format($date, 'M d,Y');
+
+          $data[$i]['num'] = $i;
+          $data[$i]['score'] = $row['score'];
+          $data[$i]['text'] = $row['action_name_en'];
+          $data[$i]['date'] = $dateformated;
+
+          $i++;
+        }
+      }
+      return $data;
+    }
 
     public function getUserScoreLevel($oauth_user_id){
       $data = array('score' => NULL, 'level'=> NULL, 'unlocked_num'=>NULL);
@@ -823,6 +844,10 @@ if ($_POST['method'] == "get_route_base_user") {
     echo(json_encode($response));
 }else if ($_POST['method'] == "get_user_unlocked_base_name") {
     $response = $sbf_api->getUserUnlockedBaseName($_POST['oauth_user_id']);
+    header('Content-Type: application/json');
+    echo(json_encode($response));
+}else if ($_POST['method'] == "get_latest_ten_score_history") {
+    $response = $sbf_api->getLatestTenScoreHistory($_POST['oauth_user_id']);
     header('Content-Type: application/json');
     echo(json_encode($response));
 }
