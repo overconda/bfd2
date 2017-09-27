@@ -556,6 +556,8 @@ class SBF_API {
             }
         }
 
+        $this->database->query('insert into debug(txt) values("559: check challenge = ' . $challenge . ' ") ');
+
         // user_base
         if ($challenge == 'win') {
             $timezone  = 7; // GMT +7
@@ -567,15 +569,20 @@ class SBF_API {
             $result = $this->database->query($sql);
             if ($result->num_rows > 0) {
               $row = $result->fetch_assoc();
-              $ged = trim($row['guardian_end_date'] . ' ');
-              if($ged != ""){ /// update onlye not have end date , end date was set by 1 hour sometime
+              $ged = trim($row['guardian_end_date'] . "");
+              if($ged == ""){ /// update onlye not have end date , end date was set by 1 hour sometime
                 $id_ = $row['ID'];
               }
             }
+            $this->database->query('insert into debug (txt) values("573: Guardian end date = ' . $ged . ' ") ');
             if($id_ > 0){
               //// Save guardian end date for calculate guardian minutes
               $sql = "update sbfdm_user_base set guardian_end_date = '$now' where ID = {$id_} ";
               $this->database->query($sql);
+
+              $this->database->query('insert into debug (txt) values("578: New guardian , can save end time ") ');
+            }else{
+              $this->database->query('insert into debug (txt) values(\'580: New guardian but no ID_ \') ');
             }
 
             /// clear all guardian of this base to false
