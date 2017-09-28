@@ -779,7 +779,11 @@ function renderBeGuardian() {
 
       $(".num-transition span:eq(1)").remove();
       //$(".num-transition span:eq(0)").attr("data-number", user_base.guardian_score).html(user_base.guardian_score);
-      $(".num-transition span:eq(0)").attr("data-number", route.latest_guardian_score).html(route.latest_guardian_score);
+      console.log('latest score in renderBeGuardian');
+      console.log(response);
+      console.log(route);
+      $(".num-transition span:eq(0)").attr("data-number", base.latest_guardian_score);
+      $(".num-transition span:eq(0)").html(base.latest_guardian_score);
     }
 
     $(".back-prev a").attr("href", "unlocked.html?base_id=" + base_id);

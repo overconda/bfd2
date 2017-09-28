@@ -519,6 +519,14 @@ class SBF_API {
         return $data;
     }
 
+    public function setStopGuardian($base_id, $oauth_user_id){
+      /// chkeck date for NULL
+      $sql = "select * from sbfdm_user_base where oauth_user_id='{$oauth_user_id}' and base_id={$base_id}";
+      $result = $this->database->query($sql);
+      if ($result->num_rows > 0) {
+
+      }
+    }
 
     /**
      * Check base challenge win or lose
