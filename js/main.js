@@ -1151,13 +1151,18 @@ function doChallengeBase(data) {
   var route = data.route;
   var base = data.base;
   var user_base = data.user_base;
-  var latest = user_base.guardian_start_date.toString();
-
+  //var latest = user_base.guardian_start_date.toString();
+  /*
+  var guardian = base.guardian;
+  var latest = guardian.latest_guardian_date;//.toString();
+  console.log('Guardian from db: ' + guardian);
+  console.log('Latest from db: ' + latest);
+  */
   /*
   console.log(route);
   console.log(base);
   */
-  console.log(user_base);
+  //console.log(user_base);
 
   //// get guardian level
   var guardian_level=0;
@@ -1167,67 +1172,81 @@ function doChallengeBase(data) {
     guardian_level = response.level;
   });
 
-  /// calculate guardian minutes
-  var hour = 60*60*1000;
-  var gmt = 14;
-  var offset = gmt * hour;
-  offset = 0;
+  //var latest;
+  var params = {'method': 'get_route_base_info', 'base_id': base.ID};
+  $.post(api_ws, params, function (response) {
+    //var score = response.score;
+    //guardian_level = response.level;
+    console.log('route base info...');
+    console.log(response);
+    latest = response.latest_guardian_date.toString();
+
+    /// calculate guardian minutes
+    var hour = 60*60*1000;
+    var gmt = 14;
+    var offset = gmt * hour;
+    offset = 0;
 
 
 
-  //latest = '2017-09-23 11:36:45';
-  console.log('offset: ' + offset);
+    //latest = '2017-09-23 11:36:45';
+    console.log('offset: ' + offset);
 
-  var d = new Date()
-var datestring = d.getFullYear() + "-" + ("0" +(d.getMonth()+1)).slice(-2) + "-" + d.getDate() + " " +
-("0" +d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2);
-  //latest.setHours(latest.getHours()+gmt);
+    var d = new Date()
+    var datestring = d.getFullYear() + "-" + ("0" +(d.getMonth()+1)).slice(-2) + "-" + d.getDate() + " " +
+    ("0" +d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2);
+    //latest.setHours(latest.getHours()+gmt);
 
-  //var now = new Date();
-  var now = getYMDdate();
-  console.log(' now .. ' + now);
-  //var dateOld = parseDate(latest);
-  //var dateNew = parseDate(now);
-  var dateOld = new Date(latest.replace(/-/g,'/'));
-  var dateNew = new Date(now);
+    //var now = new Date();
+    var now = getYMDdate();
+    console.log(' now .. ' + now);
+    //var dateOld = parseDate(latest);
+    //var dateNew = parseDate(now);
+    var dateOld = new Date(latest.replace(/-/g,'/'));
+    var dateNew = new Date(now);
 
-  console.log('Latest: ' + dateOld);
-  console.log('Now: ' + dateNew);
-  //var diff = Math.abs(new Date() - new Date(latest)); // latest to NOW
-  var diff = Math.abs(dateNew - dateOld); // latest to NOW
-  console.log('diff: ' + diff);
-  diff-=offset;
-  console.log('diff-offset: ' + diff);
-  var minutes = Math.floor((diff/1000)/60);
-  console.log('minutes: ' + minutes);
-  if(minutes<0){
-    minutes = 0;
-  }
-  if(minutes>60){
-    minutes = 0;
-  }
+    console.log('Latest: ' + dateOld);
+    console.log('Now: ' + dateNew);
+    //var diff = Math.abs(new Date() - new Date(latest)); // latest to NOW
+    var diff = Math.abs(dateNew - dateOld); // latest to NOW
+    console.log('diff: ' + diff);
+    diff-=offset;
+    console.log('diff-offset: ' + diff);
+    var minutes = Math.floor((diff/1000)/60);
+    console.log('minutes: ' + minutes);
+    if(minutes<0){
+      minutes = 0;
+    }
+    if(minutes>60){
+      minutes = 0;
+    }
 
-  if (base.guardian !== null) {
-    console.log('in doChallengeBase..');
-    console.log(latest);
-    console.log(minutes);
-    console.log(base);
-    $(".onlocation-avatar .avatar-btn").html("<span>LV</span>" + guardian_level);
-    $(".onlocation-avatar img.img-fit").attr("src", base.guardian.user_profile_photo);
-    $(".onlocation-chal-name").html(base.guardian.user_name);
-    //$(".onlocation-chal-name").html(datestring); //debug
-    $(".onlocation-chal-base").html(base.base_title + '<span>is seizing by</span>');
-    $(".onlocation-pts-wrap .onlocation-pts-col:eq(0)").html(base.latest_guardian_score + '<span>Points</span>');
-    $(".onlocation-pts-wrap .onlocation-pts-col:eq(1)").html(minutes + '<span>Minutes</span>');
-  } else {
-    $(".onlocation-chal-base").html(base.base_title + '<span>NO THE GUARDIAN NOW.</span>');
-  }
+    if (base.guardian !== null) {
+      console.log('in doChallengeBase..');
+      /*
+      console.log(latest);
+      console.log(minutes);
+      console.log(base);
+      */
+      $(".onlocation-avatar .avatar-btn").html("<span>LV</span>" + guardian_level);
+      $(".onlocation-avatar img.img-fit").attr("src", base.guardian.user_profile_photo);
+      $(".onlocation-chal-name").html(base.guardian.user_name);
+      //$(".onlocation-chal-name").html(datestring); //debug
+      $(".onlocation-chal-base").html(base.base_title + '<span>is seizing by</span>');
+      $(".onlocation-pts-wrap .onlocation-pts-col:eq(0)").html(base.latest_guardian_score + '<span>Points</span>');
+      $(".onlocation-pts-wrap .onlocation-pts-col:eq(1)").html(minutes + '<span>Minutes</span>');
+    } else {
+      $(".onlocation-chal-base").html(base.base_title + '<span>NO THE GUARDIAN NOW.</span>');
+    }
 
-  $(".on-location-name").html(base.base_title);
-  $(".on-location-meta").html(route.route_title);
-  var elem = $(".on-location-group .button:eq(1) a");
-  $(elem).attr("href", "unlocked.html?base_id=" + base.ID);
-  $(".on-location-group .button a:eq(0)").attr("href", "guardian-quizzes.html?base_id=" + base.ID);
+    $(".on-location-name").html(base.base_title);
+    $(".on-location-meta").html(route.route_title);
+    var elem = $(".on-location-group .button:eq(1) a");
+    $(elem).attr("href", "unlocked.html?base_id=" + base.ID);
+    $(".on-location-group .button a:eq(0)").attr("href", "guardian-quizzes.html?base_id=" + base.ID);
+  });
+
+
 }
 
 /**

@@ -27,6 +27,18 @@ class SBF_API {
      * @param type $oauth_user_id
      * @return type
      */
+
+    public function getRouteBaseInfo($base_id){
+      $data= array();
+      $result = $this->database->query("SELECT * FROM sbfdm_route_base WHERE ID={$base_id}");
+      if ($result->num_rows) {
+          while ($row = $result->fetch_assoc()) {
+              $data = $row;
+          }
+      }
+      return $data;
+    }
+
     public function getRouteBaseUser($route_id, $oauth_user_id) {
         $data = array("route" => NULL, "base" => array(), "user_route" => NULL, "user_base" => array());
 
@@ -541,10 +553,12 @@ class SBF_API {
             $row = $result->fetch_assoc();
             if ($score > $row['latest_guardian_score']) {
                 $challenge = 'win';
+                $timezone  = 7; // GMT +7
+              $now = gmdate("Y-m-d H:i:s", time() + 3600*($timezone/*+date("I")*/));
                 $field = array(
                     'latest_guardian_score' => $score,
                     'latest_guardian_oauth_user_id' => $oauth_user_id,
-                    'latest_guardian_date' => date('Y-m-d H:i:s'),
+                    'latest_guardian_date' => $now,
                 );
 
                 $set = "";
@@ -863,6 +877,10 @@ if ($_POST['method'] == "get_route_base_user") {
     echo(json_encode($response));
 }else if ($_POST['method'] == "get_latest_ten_score_history") {
     $response = $sbf_api->getLatestTenScoreHistory($_POST['oauth_user_id']);
+    header('Content-Type: application/json');
+    echo(json_encode($response));
+}else if ($_POST['method'] == "get_route_base_info") {
+    $response = $sbf_api->getRouteBaseInfo($_POST['base_id']);
     header('Content-Type: application/json');
     echo(json_encode($response));
 }
