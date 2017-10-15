@@ -52,8 +52,8 @@ b, u, i, center,
 dl, dt, dd, ol, ul, li,
 fieldset, form, label, legend,
 table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
 menu, nav, output, ruby, section, summary,
 time, mark, audio, video {
 	margin: 0;
@@ -64,7 +64,7 @@ time, mark, audio, video {
 	vertical-align: baseline;
 }
 /* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure, 
+article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
 	display: block;
 }
@@ -167,12 +167,12 @@ body {
 	width: 100%;
 	height: 100%;
 	z-index: -999999999;
-	
+
 	background: #393a3a;
 	background: -moz-radial-gradient(center, ellipse cover, #393a3a 0%, #020202 100%);
 	background: -webkit-radial-gradient(center, ellipse cover, #393a3a 0%,#020202 100%);
 	background: radial-gradient(ellipse at center, #393a3a 0%,#020202 100%);
-	
+
 	background-repeat: no-repeat;
 }
 
@@ -1416,7 +1416,7 @@ a:active {
 	border-radius: 5px;
 	background-color: #ffd503;
 	padding: 13px 18px;
-	
+
 	-webkit-transition: all 0.2s ease-in-out;
 	-moz-transition: all 0.2s ease-in-out;
 	-o-transition: all 0.2s ease-in-out;
@@ -1494,7 +1494,7 @@ a:active {
 	border: 3px solid;
 	border-color: #ffd503;
 	padding: 30px 0;
-	
+
 	-webkit-animation-name: animateBottom;
     -webkit-animation-duration: 0.4s;
     animation-name: animateBottom;
@@ -1502,7 +1502,7 @@ a:active {
 }
 
 @-webkit-keyframes animateBottom {
-    from {bottom:-300px; opacity:0} 
+    from {bottom:-300px; opacity:0}
     to {bottom:0; opacity:1}
 }
 
@@ -1574,7 +1574,7 @@ a:active {
 	position: absolute;
 	top: 100%;
 	content: attr(data-number);
-	
+
 	-webkit-transform: translate3d(0,0,0);
 	-moz-transform: translate3d(0,0,0);
 	transform: translate3d(0,0,0);
@@ -1652,7 +1652,7 @@ a:active {
 .accordion-desc {
 	background-color: #ffd503;
 	-webkit-animation-duration: 0.5s;
-			animation-duration: 0.5s;	
+			animation-duration: 0.5s;
 	-webkit-box-shadow: inset 0px -2px 0px 0px rgba(255,255,255,1);
 	   -moz-box-shadow: inset 0px -2px 0px 0px rgba(255,255,255,1);
 			box-shadow: inset 0px -2px 0px 0px rgba(255,255,255,1);
@@ -1716,12 +1716,12 @@ a:active {
 	border-radius: 50%;
 	cursor: pointer;
 	text-align: center;
-	
+
 	-webkit-transform: rotate(0deg);
 	-moz-transform: rotate(0deg);
 	-o-transform: rotate(0deg);
 	transform: rotate(0deg);
-	
+
 	-webkit-transition: .4s ease-in-out;
 	-moz-transition: .4s ease-in-out;
 	-o-transition: .4s ease-in-out;
@@ -1730,7 +1730,7 @@ a:active {
 
 .accordion-wrapper.accordion-active .accordion-header .accordion-box > span {
 	background-color: #ffd503;
-	
+
 	-webkit-transform: rotate(180deg);
 	-moz-transform: rotate(180deg);
 	-o-transform: rotate(180deg);
@@ -1823,7 +1823,7 @@ a:active {
 	border-radius: 5px;
 	background-color: #ffd503;
 	padding: 0 20px 0 68px;
-	
+
 	-webkit-transition: background-color 0.2s ease-in-out;
 	-moz-transition: background-color 0.2s ease-in-out;
 	-o-transition: background-color 0.2s ease-in-out;
@@ -1982,7 +1982,7 @@ a:active {
 	left: 0;
 	bottom: 64px;
 	width: 100%;
-	
+
 	background: -moz-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 50%, rgba(0,0,0,1) 100%);
 	background: -webkit-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(0,0,0,1) 50%,rgba(0,0,0,1) 100%);
 	background: linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(0,0,0,1) 50%,rgba(0,0,0,1) 100%);
@@ -2044,7 +2044,7 @@ a:active {
 	background-size: cover;
 	background-position: top left;
 	padding: 0 22px;
-	
+
 	-webkit-transition: top 0.2s ease-in-out;
 	-moz-transition: top 0.2s ease-in-out;
 	-o-transition: top 0.2s ease-in-out;
@@ -2059,7 +2059,7 @@ a:active {
 	position: relative;
 	display: inline-block;
 	top: calc(50% - 1px);
-	
+
 	-webkit-transform: translateY(-50%);
 	-moz-transform: translateY(-50%);
 	transform: translateY(-50%);
@@ -2079,7 +2079,7 @@ a:active {
 	color: #53585f;
 	text-transform: uppercase;
 	white-space: nowrap;
-	
+
 	-webkit-transform: translateY(-50%);
 	-moz-transform: translateY(-50%);
 	transform: translateY(-50%);
@@ -2093,12 +2093,12 @@ a:active {
 	width: 30px;
 	height: 25px;
 	z-index: 1;
-	
+
 	-webkit-transform: rotate(0deg);
 	-moz-transform: rotate(0deg);
 	-o-transform: rotate(0deg);
 	transform: rotate(0deg);
-	
+
 	-webkit-transition: .5s ease-in-out;
 	-moz-transition: .5s ease-in-out;
 	-o-transition: .5s ease-in-out;
@@ -2626,7 +2626,7 @@ a:active {
 	border-radius: 5px;
 	background-color: #ffd503;
 	cursor: pointer;
-	
+
 	-webkit-transition: background-color 0.2s ease-in-out;
 	-moz-transition: background-color 0.2s ease-in-out;
 	-o-transition: background-color 0.2s ease-in-out;
@@ -2644,7 +2644,7 @@ a:active {
 	position: absolute;
 	content: '';
 	background-color: #53585f;
-	
+
 }
 
 .route-fav.noFav:before {
@@ -2773,7 +2773,7 @@ a:active {
 	width: 2px;
 	height: 60px;
 	background: #53585f;
-	
+
 	-webkit-transform: rotate(18deg);
 	-moz-transform: rotate(18deg);
 	-o-transform: rotate(18deg);
@@ -2820,7 +2820,7 @@ a:active {
 .route-svg-content .base-marker > .group-active,
 .route-svg-content .base-marker > .group-unactive {
 	opacity: 0;
-	
+
 	-webkit-transition: all 0.5s ease;
 	-moz-transition: all 0.5s ease;
 	-o-transition: all 0.5s ease;
@@ -2832,7 +2832,7 @@ a:active {
 	-moz-transition: all 0.8s ease;
 	-o-transition: all 0.8s ease;
 	transition: all 0.8s ease;
-	
+
 	-webkit-transition-delay: 0.2s;
 	-moz-transition-delay: 0.2s;
 	-o-transition-delay: 0.2s;
@@ -2855,10 +2855,10 @@ a:active {
 
 .base-active .circle-active {
 	opacity: 0;
-	
+
 	animation: baseAnimate 1200ms ease-out infinite;
 	-webkit-animation: baseAnimate 1200ms ease-out infinite;
-	
+
 	animation-delay: 1s;
 	-webkit-animation-delay: 1s;
 }
@@ -2906,7 +2906,7 @@ a:active {
 
 @media (max-width: 1199px) {
 	.route-detail-pts-wrap {
-		background-image: none !important;	
+		background-image: none !important;
 	}
 }
 
@@ -3330,7 +3330,7 @@ a:active {
 	width: 2px;
 	height: 57px;
 	background: #545960;
-	
+
 	-webkit-transform: rotate(18deg);
 	-moz-transform: rotate(18deg);
 	-o-transform: rotate(18deg);
@@ -3436,12 +3436,12 @@ a:active {
 	width: 86%;
 	height: auto;
 	border: 6px solid #fff;
-	
+
 	-webkit-transform: rotate(-4deg);
 	-moz-transform: rotate(-4deg);
 	-o-transform: rotate(-4deg);
 	transform: rotate(-4deg);
-	
+
 	-webkit-box-shadow: 5px 5px 16px 0px rgba(0,0,0,0.25);
 	-moz-box-shadow: 5px 5px 16px 0px rgba(0,0,0,0.25);
 	-o-box-shadow: 5px 5px 16px 0px rgba(0,0,0,0.25);
@@ -3470,7 +3470,7 @@ a:active {
 	left: 0;
 	width: 100%;
 	height: 15px;
-	
+
 	background: rgba(255,255,255,1);
 	background: -moz-linear-gradient(top, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%);
 	background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(255,255,255,0)), color-stop(100%, rgba(255,255,255,1)));
@@ -3702,11 +3702,11 @@ a:active {
 	padding: 27px 0 16px;
 	background-color: #ffd503;
 	z-index: 999999;
-	
+
 	-webkit-box-shadow: 0px 3px 10px 0px rgba(0,0,0,0.15);
 	-moz-box-shadow: 0px 3px 10px 0px rgba(0,0,0,0.15);
 	box-shadow: 0px 3px 10px 0px rgba(0,0,0,0.15);
-	
+
 	animation-duration: 0.8s;
 	animation-delay: 2.2s;
 }
@@ -3948,12 +3948,12 @@ a:active {
 	right: 0;
 	border-radius: 50%;
 	z-index: 0;
-	
+
 	background: #ffd503;
 	background: -moz-linear-gradient(top, #ffd503 0%, #fff2b2 35%, #fff2b2 50%, #fff2b2 65%, #ffd503 100%);
 	background: -webkit-linear-gradient(top, #ffd503 0%,#fff2b2 35%,#fff2b2 50%,#fff2b2 65%,#ffd503 100%);
 	background: linear-gradient(to bottom, #ffd503 0%,#fff2b2 35%,#fff2b2 50%,#fff2b2 65%,#ffd503 100%);
-	
+
 	-webkit-animation: redeemRotating 5s linear infinite;
 	-moz-animation: redeemRotating 5s linear infinite;
 	-o-animation: redeemRotating 5s linear infinite;
@@ -4280,7 +4280,7 @@ a:active {
 }
 
 .profile-msg {
-	display: none;
+	/*display: none;*/
 	position: absolute;
 	top: 25px;
 	left: 30px;
@@ -4303,7 +4303,7 @@ a:active {
 	color: #fff;
 	background: #C92327;
 	border-radius: 50%;
-	
+
 	-webkit-animation-duration: 0.6s;
 	-moz-animation-duration: 0.6s;
 	-o-animation-duration: 0.6s;
@@ -4534,7 +4534,7 @@ a:active {
 	width: 2px;
 	height: 60px;
 	background: #545960;
-	
+
 	-webkit-transform: rotate(18deg);
 	-moz-transform: rotate(18deg);
 	-o-transform: rotate(18deg);
@@ -4620,7 +4620,7 @@ a:active {
 	left: 0;
 	width: 110px;
 	height: 110px;
-	
+
 	-webkit-transform: rotate(90deg);
 	-moz-transform: rotate(90deg);
 	-o-transform: rotate(90deg);
@@ -4667,7 +4667,7 @@ a:active {
 	top: 50%;
 	width: 90px;
 	height: auto;
-	
+
 	-webkit-transform: translateY(-50%);
 	-moz-transform: translateY(-50%);
 	-o-transform: translateY(-50%);
@@ -5290,7 +5290,7 @@ a:active {
 	right: 0;
 	font-size: 35px;
 	color: #363e40;
-	
+
 	-webkit-transition: color 0.2s ease-in-out;
 	-moz-transition: color 0.2s ease-in-out;
 	-o-transition: color 0.2s ease-in-out;
@@ -5408,7 +5408,7 @@ a:active {
 	border: 4px solid #fff;
 	background: #676767;
 	text-align: center;
-	
+
 	-webkit-transition: background-color 0.2s ease-in-out;
 	-moz-transition: background-color 0.2s ease-in-out;
 	-o-transition: background-color 0.2s ease-in-out;
@@ -5892,7 +5892,7 @@ a:active {
 	float: left;
 	padding: 5px 8px;
 	margin: 0 5px 5px 0;
-	
+
 	-webkit-transition: color 0.2s ease-in-out;
 	-moz-transition: color 0.2s ease-in-out;
 	-o-transition: color 0.2s ease-in-out;
@@ -6255,12 +6255,12 @@ a:active {
 	position: relative;
 	-webkit-transform: scale(0);
 	transform: scale(0);
-	
+
 	-webkit-transform-origin : 50% 100%;
     -moz-transform-origin : 50% 100%;
     -o-transform-origin : 50% 100%;
-    transform-origin : 50% 100%; 
-	
+    transform-origin : 50% 100%;
+
 	-webkit-transition: all 0.3s ease-out;
 	-moz-transition: all 0.3s ease-out;
 	-o-transition: all 0.3s ease-out;
@@ -6325,12 +6325,12 @@ a:active {
 
 	-webkit-transform: scale(0);
 	transform: scale(0);
-	
+
 	-webkit-transform-origin : 50% 50%;
     -moz-transform-origin : 50% 50%;
     -o-transform-origin : 50% 50%;
     transform-origin : 50% 50%;
-	
+
 	-webkit-transition: all 0.3s ease-out;
 	-moz-transition: all 0.3s ease-out;
 	-o-transition: all 0.3s ease-out;
@@ -6541,12 +6541,12 @@ a:active {
 	top: 50%;
 	left: 50%;
 	z-index: 0;
-	
+
 	-webkit-transform: translate(-50%, -50%);
 	-moz-transform: translate(-50%, -50%);
 	-o-transform: translate(-50%, -50%);
 	transform: translate(-50%, -50%);
-	
+
 	animation-duration: 0.8s;
 	animation-delay: 2.4s;
 }
@@ -6740,7 +6740,7 @@ a:active {
 	background: #ffe200;
 	border-radius: 8px;
 	border: 4px solid #fff;
-	
+
 	-webkit-transition: all 0.2s ease-in-out;
 	-moz-transition: all 0.2s ease-in-out;
 	-o-transition: all 0.2s ease-in-out;
@@ -6928,7 +6928,7 @@ a:active {
 .news-single #content-wrapper {
 	background: #fff;
 }
-	
+
 .terms-container h3,
 .modal-terms-box h3 {
 	color: #53585F;
@@ -7015,7 +7015,7 @@ a:active {
 	min-width: 16px;
 	font-size: 20px;
 	color: #848484;
-	
+
 	-webkit-transition: color 0.2s ease-in-out;
 	-moz-transition: color 0.2s ease-in-out;
 	-o-transition: color 0.2s ease-in-out;
@@ -7080,7 +7080,7 @@ a:active {
 	border-radius: 50%;
 	text-align: center;
 	margin-right: 3px;
-	
+
 	-webkit-transition: color 0.2s ease-in-out;
 	-moz-transition: color 0.2s ease-in-out;
 	-o-transition: color 0.2s ease-in-out;
@@ -7706,7 +7706,7 @@ a:active {
 		padding: 10px 30px 30px;
 	}
 	/* ========== Button settings end ========== */
-	
+
 	.get-across-wrap {
 		width: 307px;
 	}
@@ -9027,18 +9027,18 @@ a:active {
 		-moz-transition: all 0s;
 		-o-transition: all 0s;
 		transition: all 0s;
-		
+
 		transition-delay: 0s;
 	}
 	.msgOpen .msg-wrapper .main-close {
 		opacity: 1;
 		visibility: visible;
-		
+
 		-webkit-transition: all 0.2s;
 		-moz-transition: all 0.2s;
 		-o-transition: all 0.2s;
 		transition: all 0.2s;
-		
+
 		transition-delay: 0.4s;
 	}
 	.on-location-box {
@@ -9575,7 +9575,7 @@ a:active {
 		width: 46px;
 		height: 46px;
 	}
-	
+
 	/* ========== Button settings start ========== */
 	.button-sticky {
 		position: inherit;
@@ -9642,7 +9642,7 @@ a:active {
 		padding: 12px;
 	}
 	/* ========== Button settings start ========== */
-	
+
 	.modal-content {
 		width: 900px;
 		margin: 0 auto;
@@ -9735,15 +9735,15 @@ a:active {
 		width: 180px;
 		opacity: 0;
 		background-color: rgba(0,0,0,.5);
-		
+
 		-webkit-transition: all 0.3s ease;
 		-moz-transition: all 0.3s ease;
 		-o-transition: all 0.3s ease;
 		transition: all 0.3s ease;
-		
+
 		-webkit-transform: scale(0);
 		transform: scale(0);
-		
+
 		-webkit-transform-origin: 0 0;
 		transform-origin: 0 0;
 	}
@@ -9755,7 +9755,7 @@ a:active {
 	.nav-menu-desktop > ul > li > a {
 		display: inline-block;
 		padding: 8px 20px 15px 20px;
-		
+
 		-webkit-transition: all 0.2s ease-in-out;
 		-moz-transition: all 0.2s ease-in-out;
 		-o-transition: all 0.2s ease-in-out;
@@ -9782,7 +9782,7 @@ a:active {
 		-moz-transform: translateX(-50%);
 		-o-transform: translateX(-50%);
 		transform: translateX(-50%);
-		
+
 		-webkit-transition: all 0.2s ease-in-out;
 		-moz-transition: all 0.2s ease-in-out;
 		-o-transition: all 0.2s ease-in-out;
@@ -10011,7 +10011,7 @@ a:active {
 		border-left: 12px solid;
 		border-bottom: 14px solid transparent;
 		border-left-color: #f3c600;
-		
+
 		-webkit-transition: all 0.2s ease-in-out;
 		-moz-transition: all 0.2s ease-in-out;
 		-o-transition: all 0.2s ease-in-out;
@@ -10040,7 +10040,7 @@ a:active {
 	.desktop-more-button a span:last-child {
 		padding: 4px 6px 5px 16px;
 		background-color: #ffd503;
-		
+
 		-webkit-transition: all 0.2s ease-in-out;
 		-moz-transition: all 0.2s ease-in-out;
 		-o-transition: all 0.2s ease-in-out;
@@ -10076,7 +10076,7 @@ a:active {
 		height: 100%;
 		background-color: rgba(0,0,0,0);
 		z-index: 2;
-		
+
 		-webkit-transition: all 0.2s ease-in-out;
 		-moz-transition: all 0.2s ease-in-out;
 		-o-transition: all 0.2s ease-in-out;
@@ -10146,7 +10146,7 @@ a:active {
 		font-size: 13px;
 		text-transform: uppercase;
 		color: #8c8c8c;
-		
+
 		-webkit-transition: color 0.2s ease-in-out;
 		-moz-transition: color 0.2s ease-in-out;
 		-o-transition: color 0.2s ease-in-out;
@@ -10172,7 +10172,7 @@ a:active {
 		border-radius: 50%;
 		text-align: center;
 		margin-left: 3px;
-		
+
 		-webkit-transition: color 0.2s ease-in-out;
 		-moz-transition: color 0.2s ease-in-out;
 		-o-transition: color 0.2s ease-in-out;
@@ -10256,7 +10256,7 @@ a:active {
 		width: 932px;
 		margin: 0 auto;
 	}
-	
+
 	/* ========== Fullpage main elements ========== */
 	.full-page #content-wrapper {
 		position: inherit;
@@ -10284,7 +10284,7 @@ a:active {
 		margin: 0 0 40px;
 	}
 	/* ========== End ========== */
-	
+
 	.about-us-image img {
 		width: 35%;
 	}
@@ -10497,7 +10497,7 @@ a:active {
 	.route-info-box .button a {
 		margin-bottom: 0;
 	}
-	
+
 	/* =================== Guardian inner container ================== */
 	.base-header h1,
 	.base-header .meta-wrapper,
@@ -10521,7 +10521,7 @@ a:active {
 		margin-right: auto;
 	}
 	/* =================== End ================== */
-	
+
 	.base-header {
 		padding: 60px 0 30px;
 	}
@@ -10825,7 +10825,7 @@ a:active {
 		height: 100%;
 		border-radius: 10px;
 		background: rgba(0,0,0,0);
-		
+
 		-webkit-transition: all 0.2s ease-in-out;
 		-moz-transition: all 0.2s ease-in-out;
 		-o-transition: all 0.2s ease-in-out;

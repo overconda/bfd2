@@ -983,12 +983,10 @@ function doOnlocation1Base() {
       if (user_base === null) {
         onLocation(false, 'doUnlockBase', response);
       } else {
-        if(user_base && user_base.unlocked_status){
-          if (user_base.unlocked_status == 'false') {
-            onLocation(false, 'doUnlockBase', response);
-          } else if (user_base.unlocked_status == 'true') {
-            onLocation(true, 'doChallengeBase', response);
-          }
+        if (user_base.unlocked_status == 'false') {
+          onLocation(false, 'doUnlockBase', response);
+        } else if (user_base.unlocked_status == 'true') {
+          onLocation(true, 'doChallengeBase', response);
         }
       }
     });
@@ -1153,6 +1151,12 @@ function doChallengeBase(data) {
   var route = data.route;
   var base = data.base;
   var user_base = data.user_base;
+  var guardian_minute = user_base.guardian_minute;
+
+  if(guardian_minute==null){
+    guardian_minute=0;
+  }
+
   //var latest = user_base.guardian_start_date.toString();
   /*
   var guardian = base.guardian;
@@ -1189,16 +1193,19 @@ function doChallengeBase(data) {
     var offset = gmt * hour;
     offset = 0;
 
-
+    //var guardian_minute = base.guardian_minute;
+    console.log('Guardian Minute from db');
+    console.log(guardian_minute);
 
     //latest = '2017-09-23 11:36:45';
-    console.log('offset: ' + offset);
+    //console.log('offset: ' + offset);
 
     var d = new Date()
     var datestring = d.getFullYear() + "-" + ("0" +(d.getMonth()+1)).slice(-2) + "-" + d.getDate() + " " +
     ("0" +d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2);
     //latest.setHours(latest.getHours()+gmt);
 
+    /*
     //var now = new Date();
     var now = getYMDdate();
     console.log(' now .. ' + now);
@@ -1222,6 +1229,7 @@ function doChallengeBase(data) {
     if(minutes>60){
       minutes = 0;
     }
+    */
 
     if (base.guardian !== null) {
       console.log('in doChallengeBase..');
@@ -1230,13 +1238,16 @@ function doChallengeBase(data) {
       console.log(minutes);
       console.log(base);
       */
+
+
       $(".onlocation-avatar .avatar-btn").html("<span>LV</span>" + guardian_level);
       $(".onlocation-avatar img.img-fit").attr("src", base.guardian.user_profile_photo);
       $(".onlocation-chal-name").html(base.guardian.user_name);
       //$(".onlocation-chal-name").html(datestring); //debug
       $(".onlocation-chal-base").html(base.base_title + '<span>is seizing by</span>');
       $(".onlocation-pts-wrap .onlocation-pts-col:eq(0)").html(base.latest_guardian_score + '<span>Points</span>');
-      $(".onlocation-pts-wrap .onlocation-pts-col:eq(1)").html(minutes + '<span>Minutes</span>');
+      //$(".onlocation-pts-wrap .onlocation-pts-col:eq(1)").html(minutes + '<span>Minutes</span>');
+      $(".onlocation-pts-wrap .onlocation-pts-col:eq(1)").html(guardian_minute + '<span>Minutes</span>');
     } else {
       $(".onlocation-chal-base").html(base.base_title + '<span>NO THE GUARDIAN NOW.</span>');
     }
@@ -1303,6 +1314,12 @@ function doAnswerChallenge(base_id, quiz_id, answer) {
       var params = {"method": "set_base_user", "score": your_score, "base_id": base.ID, "oauth_user_id": sbf_user.oauth_user_id};
       $.post(api_ws, params, function (response) {
         if (your_score > score_to_win) {
+
+          // stop time, score of previous guardian
+          var params = {"method": "set_stop_guardian", "base_id": base.ID};
+          $.post(api_ws, params, function (){});
+
+
           window.location = subfolder + "/be-guardian.html?base_id=" + base.ID;
         } else {
           window.location = subfolder + "/guardian-quizzes-incorrect.html?base_id=" + base.ID;

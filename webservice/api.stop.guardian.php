@@ -150,15 +150,6 @@ class SBF_API {
         return $data;
     }
 
-    public function getNewMessageNum($oauth_user_id){
-      $sql = "select count(*) as new_message from sbf_message where is_read=0 and rcv_oauth_user_id = '{$oauth_user_id}' ";
-
-      $result = $this->database->query($sql);
-      $row = $result->fetch_assoc();
-
-      return $row;
-    }
-
     function isMoreThanHour($dateStart, $dateStop){
         $hour = 3600;
         $d1 = strtotime($dateStart);
@@ -540,12 +531,55 @@ class SBF_API {
         return $data;
     }
 
-    public function setStopGuardian($base_id, $oauth_user_id){
-      /// chkeck date for NULL
-      $sql = "select * from sbfdm_user_base where oauth_user_id='{$oauth_user_id}' and base_id={$base_id}";
-      $result = $this->database->query($sql);
-      if ($result->num_rows > 0) {
+    public function setStopGuardian($base_id){
 
+      /// get latest guardian for this base
+      $sql = "SELECT * FROM sbfdm_user_base WHERE base_id={$base_id} order by guardian_start_date desc ";
+      $result = $this->database->query($sql);
+      if ($result->num_rows >0 ) {
+        $row = $result->fetch_assoc();
+        $oauth_user_id = $row['oauth_user_id'];
+
+        /// chkeck absolutely DEAD guardian
+        $sql = "SELECT * FROM sbfdm_user_base WHERE guardian_start_date is NOT null and base_id={$base_id} and oauth_user_id='{$oauth_user_id}' ";
+        $result = $this->database->query($sql);
+        if ($result->num_rows >0 ) {
+          //// Ever be guardian
+
+          $sql = "SELECT * FROM sbfdm_user_base WHERE guardian_status='false' and guardian_end_date is NOT null and base_id={$base_id}";
+          $result = $this->database->query($sql);
+          if ($result->num_rows >0 ) {
+            /// Have Albsolutely DEAD guardian , do nothing
+          }else{
+            /// Not set or should re-set end date of guardian
+            $timezone  = 7; // GMT +7
+            $now = gmdate("Y-m-d H:i:s", time() + 3600*($timezone/*+date("I")*/));
+
+            $sql = "update sbfdm_user_base set guardian_status='false' , guardian_end_date='{$now}' where base_id={$base_id} and oauth_user_id='{$oauth_user_id}' ";
+            $this->database->query($sql);
+
+            //// calculate diff and record , if more than 60 minutes , set to 60
+            $sql = "select guardian_start_date from sbfdm_user_base where base_id={$base_id} and oauth_user_id='{$oauth_user_id}' ";
+            $result = $this->database->query($sql);
+            $row = $result->fetch_assoc();
+            $guardian_start_date = $row['guardian_start_date'];
+
+            $dStart = date_create($guardian_start_date);
+            $dStop = date_create($now);
+            $diff = date_diff($dStop, $dStart);
+            $minutes = $diff->format('%i') + 0; // minutes
+            if($minutes>60){
+              $minuets=60;
+
+              $sql = "update sbfdm_route_base set latest_guardian_score=0 , latest_guardian_date='{$now}' , latest_guardian_oauth_user_id='{$oauth_user_id}' where ID={$base_id}";
+              $this->database->query($sql);
+            }
+
+            ///// Set!!
+            $sql = "update sbfdm_user_base set guardian_end_date={$now} and guardian_minute={$minutes} where base_id={$base_id} and oauth_user_id='{$oauth_user_id}' ";
+            $this->database->query($sql);
+          }
+        }
       }
     }
 
@@ -681,9 +715,7 @@ class SBF_API {
     ***********************************/
 
     public function addScore($action_id, $level_id, $oauth_user_id, $route_id=0 , $base_id=0){
-      //$now = date('Y-m-d H:i:s');
-      $timezone  = 7; // GMT +7
-      $now = gmdate("Y-m-d H:i:s", time() + 3600*($timezone/*+date("I")*/));
+      $now = date('Y-m-d H:i:s');
       $score=0;
       $reason = "";
 
@@ -791,10 +823,7 @@ class SBF_API {
     public function setFavRoute($route_id, $oauth_user_id){
       $isFav = false;
       $haveRow = false;
-      //$now = date('Y-m-d H:i:s');
-      $timezone  = 7; // GMT +7
-      $now = gmdate("Y-m-d H:i:s", time() + 3600*($timezone/*+date("I")*/));
-
+      $now = date('Y-m-d H:i:s');
       $sql = "select favorite_status from sbfdm_user_route where route_id = $route_id and oauth_user_id='$oauth_user_id' ";
 
 
@@ -897,8 +926,8 @@ if ($_POST['method'] == "get_route_base_user") {
     $response = $sbf_api->getRouteBaseInfo($_POST['base_id']);
     header('Content-Type: application/json');
     echo(json_encode($response));
-}else if ($_POST['method'] == "get_new_message_num") {
-    $response = $sbf_api->getNewMessageNum($_POST['oauth_user_id']);
+}else if ($_POST['method'] == "set_stop_guardian") {
+    $response = $sbf_api->setStopGuardian($_POST['base_id'], $_POST['oauth_user_id']);
     header('Content-Type: application/json');
     echo(json_encode($response));
 }

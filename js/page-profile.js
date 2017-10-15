@@ -178,4 +178,19 @@ $(document).ready(function () {
 
 
 
+  /////// Message New checking
+  $('.profile-msg span').css('display', 'none');
+
+  var params = {'method': 'get_new_message_num', 'oauth_user_id': sbf_user.oauth_user_id};
+  $.post(api_ws, params, function (response) {
+    //console.log(response);
+    var c = response;
+    var num = c.new_message;
+    if(num>0){
+      $('.profile-msg span').text(num);
+      $('.profile-msg span').css('display', 'block');
+    }
+  });
+
+
 });

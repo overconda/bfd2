@@ -60,6 +60,7 @@ $out = <<<EOD
   <li><a href="question_list.php" target=_blank>List คำถาม</a>
   <li><a href="route_list.php" target=_blank>List route</a>
   <li><a href="base_list.php" target=_blank>List base</a>
+  <li><a href="message.php" target=_blank>Message</a>
 </ul>
 </div>
 EOD;
